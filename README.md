@@ -1,2 +1,2 @@
-# upcrash-server
-Server
+# Upcrash Server
+Runs ads
