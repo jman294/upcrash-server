@@ -50,17 +50,28 @@ class UpcrashServer {
   }
 
   Future handle(HttpRequest req) async {
-    _addCorsHeaders(req);
-
     List<String> uriParts = req.uri.pathSegments;
     Map<String, Function> apiMap = {
-      'save': _serApi.save
+      'save': _serApi.save,
+      'new': _serApi.new_
     };
 
     Response resp = new Response();
-    if (_isValidUri(uriParts)) {
-      Id id = new Id(uriParts[1]);
-      resp = await apiMap[uriParts[0]](id);
+    if (_isValidUri(uriParts, apiMap)) {
+      switch (uriParts.length) {
+        case 0:
+          print('base');
+          break;
+        case 1:
+          if (uriParts[0] == 'new') {
+            resp = await apiMap[uriParts[0]]();
+          }
+          break;
+        case 2:
+          Id id = new Id(uriParts[1]);
+          resp = await apiMap[uriParts[0]](id);
+          break;
+      }
     } else {
       resp.statusCode = HttpStatus.NOT_FOUND;
       _log.warning('invalid uri');
@@ -78,16 +89,13 @@ class UpcrashServer {
         'Origin, X-Requested-With, Content-Type, Accept');
   }
 
-  bool _isValidUri(List<String> uriParts) {
-    List<String> apiMethods = ['save'];
-    if (uriParts.length != 2) {
-      return false;
-    } else {
-      if (!apiMethods.contains(uriParts[0])) {
+  bool _isValidUri(List<String> uriParts, Map<String, Function> apiMap) {
+    if (uriParts.length == 2) {
+      if (apiMap[uriParts[0]] == null || uriParts[1] == '') {
         return false;
       }
     }
-    return true;
+    return uriParts.length <= 2;
   }
 
   Future _sendApiResponse(Response apiResponse, HttpResponse response) {

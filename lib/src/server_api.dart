@@ -26,4 +26,10 @@ class ServerApi {
       return res;
     }
   }
+
+  Future<Response> new_() async {
+    Response res = new Response();
+    res.write('asdf');
+    return res;
+  }
 }
