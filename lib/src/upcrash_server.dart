@@ -65,11 +65,14 @@ class UpcrashServer {
         case 1:
           if (uriParts[0] == 'new') {
             resp = await apiMap[uriParts[0]]();
+            if (resp.e != null) {
+              _log.warning(resp.e.cause, resp.e);
+            }
           }
           break;
         case 2:
           Id id = new Id(uriParts[1]);
-          resp = await apiMap[uriParts[0]](id);
+          resp = await apiMap[uriParts[0]](id, JSON.decode(await UTF8.decodeStream(req)));
           break;
       }
     } else {

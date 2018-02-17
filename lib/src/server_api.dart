@@ -2,6 +2,8 @@ library server.api;
 
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 
 import 'package:firebase/firebase_io.dart';
 import 'package:server/src/id.dart';
@@ -14,13 +16,14 @@ class ServerApi {
   String _host;
   ServerApi(this._db, this._host);
 
-  Future<Response> save(Id id) async {
+  Future<Response> save(Id id, Map<dynamic, dynamic> payload) async {
     final String results =
         await _db.get('$_host/$id.json');
     if (results == null) {
       return new Response.error(
           HttpStatus.NOT_FOUND, new ServerException(ServerErrors.crashNotFound));
     } else {
+      var results = await _db.put('$_host/$id.json', payload);
       Response res = new Response();
       res.write(results.toString());
       return res;
@@ -29,7 +32,9 @@ class ServerApi {
 
   Future<Response> new_() async {
     Response res = new Response();
-    res.write('asdf');
+    res.headers['Content-Type'] = 'text/json';
+    Id id = new Id.pronounceable(7);
+    res.write(new JsonEncoder().convert({'newId': id.toString()}));
     return res;
   }
 }
