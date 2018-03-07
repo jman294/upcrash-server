@@ -16,6 +16,7 @@ class UpcrashServer {
   final Logger _log = new Logger('UpcrashServer');
   ServerApi _serApi;
   FirebaseClient _fbClient;
+  String _templateString;
 
   UpcrashServer() {
     Logger.root
@@ -24,6 +25,11 @@ class UpcrashServer {
   }
 
   Future auth() async {
+    final rawTemplateString =
+        await new File('web/template.html').readAsString();
+    final String blank =
+        "{html: '',css: '',js: '',htmlShow: true,jsShow: true,cssShow: true,highlightElement: true}";
+    _templateString = rawTemplateString.replaceAll('%FILLIN%', blank);
     final Map<String, String> envVars = Platform.environment;
     String privateKey;
 
@@ -45,22 +51,21 @@ class UpcrashServer {
         await obtainAccessCredentialsViaServiceAccount(
             accountCredentials, scopes, client);
     _fbClient = new FirebaseClient(credentials.accessToken.data);
-    _serApi = new ServerApi(_fbClient, 'https://upcrash-server.firebaseio.com/');
+    _serApi = new ServerApi(_fbClient, 'https://upcrash-server.firebaseio.com/',
+        rawTemplateString);
     client.close();
   }
 
   Future handle(HttpRequest req) async {
     List<String> uriParts = req.uri.pathSegments;
-    Map<String, Function> apiMap = {
-      'save': _serApi.save,
-      'new': _serApi.new_
-    };
+    Map<String, Function> apiMap = {'save': _serApi.save, 'new': _serApi.new_};
 
     Response resp = new Response();
     if (_isValidUri(uriParts, apiMap)) {
       switch (uriParts.length) {
         case 0:
-          print('base');
+          resp.headers['content-type'] = 'text/html';
+          resp.write(_templateString);
           break;
         case 1:
           if (uriParts[0] == 'new') {
@@ -68,11 +73,17 @@ class UpcrashServer {
             if (resp.e != null) {
               _log.warning(resp.e.cause, resp.e);
             }
+          } else {
+            //TODO check if valid id
+            if (uriParts[0] != 'favicon.ico') {
+              resp = await _serApi.load(new Id(uriParts[0]));
+            }
           }
           break;
         case 2:
           Id id = new Id(uriParts[1]);
-          resp = await apiMap[uriParts[0]](id, JSON.decode(await UTF8.decodeStream(req)));
+          resp = await apiMap[uriParts[0]](
+              id, JSON.decode(await UTF8.decodeStream(req)));
           break;
       }
     } else {

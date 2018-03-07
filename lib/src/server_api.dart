@@ -14,7 +14,8 @@ import 'package:server/src/response.dart';
 class ServerApi {
   FirebaseClient _db;
   String _host;
-  ServerApi(this._db, this._host);
+  String _template;
+  ServerApi(this._db, this._host, this._template);
 
   Future<Response> save(Id id, Map<dynamic, dynamic> payload) async {
     final String results =
@@ -26,6 +27,20 @@ class ServerApi {
       var results = await _db.put('$_host/$id.json', payload);
       Response res = new Response();
       res.write(results.toString());
+      return res;
+    }
+  }
+
+  Future<Response> load(Id id) async {
+    final String results =
+        await _db.get('$_host/$id.json');
+    if (results == null) {
+      return new Response.error(
+          HttpStatus.NOT_FOUND, new ServerException(ServerErrors.crashNotFound));
+    } else {
+      Response res = new Response();
+      res.headers['content-type'] = 'text/html';
+      res.write(_template.replaceAll('%FILLIN%', results.toString()));
       return res;
     }
   }
