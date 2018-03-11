@@ -9,6 +9,7 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:firebase/firebase_io.dart';
 import 'package:logging/logging.dart';
 import 'package:server/src/server_api.dart';
+import 'package:server/src/server_errors.dart';
 import 'package:server/src/id.dart';
 import 'package:server/src/response.dart';
 
@@ -82,8 +83,15 @@ class UpcrashServer {
           break;
         case 2:
           Id id = new Id(uriParts[1]);
-          resp = await apiMap[uriParts[0]](
-              id, JSON.decode(await UTF8.decodeStream(req)));
+          Map<dynamic, dynamic> payload;
+          try {
+            payload = JSON.decode(await UTF8.decodeStream(req));
+            resp = await _serApi.save(id, payload);
+          } on FormatException {
+            resp.statusCode = HttpStatus.BAD_REQUEST;
+            resp.reasonPhrase = ServerErrors.invalidCrash;
+            _log.warning('invalid crash attempted to be saved');
+          }
           break;
       }
     } else {

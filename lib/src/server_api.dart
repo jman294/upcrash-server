@@ -32,7 +32,7 @@ class ServerApi {
   }
 
   Future<Response> load(Id id) async {
-    final String results =
+    final dynamic results =
         await _db.get('$_host/$id.json');
     if (results == null) {
       return new Response.error(
@@ -40,7 +40,7 @@ class ServerApi {
     } else {
       Response res = new Response();
       res.headers['content-type'] = 'text/html';
-      res.write(_template.replaceAll('%FILLIN%', results.toString()));
+      res.write(_template.replaceAll('%FILLIN%', JSON.encode(results)));
       return res;
     }
   }
