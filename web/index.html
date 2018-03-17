@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Upcrash</title>
+
+    <link href="styles/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
+    <style type="text/css" media="screen">
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <img src="images/logo.png" alt="upcrash logo" title="Upcrash"></img>
+      <a href="">ABOUT</a>
+      <a href="">EMBED</a>
+      <a href="">NEW</a>
+      <input id="jscheck" class="check" type="checkbox" checked>JS</input>
+      <input id="csscheck" class="check" type="checkbox" checked>CSS</input>
+      <input id="htmlcheck" class="check" type="checkbox" checked>HTML</input>
+      <input id="highlight" class="check" type="checkbox" checked>Highlight edited element?</input>
+    </div>
+
+    <div id="body">
+      <div id="jscon" class="con">
+        <div id="jsedit" class="edit"></div>
+        <!--<div class="dropzone"></div>-->
+        <div id="jspop" class="pop">
+          JAVASCRIPT
+        </div>
+        <div id="jsmenu">
+          <button id="menubutton">css</button>
+        </div>
+      </div>
+      <div id="htmlcon" class="con">
+        <div id="htmledit" class="edit"></div>
+        <!--<div class="dropzone"></div>-->
+        <div id="htmlpop" class="pop">
+          HTML
+        </div>
+      </div>
+      <div id="csscon" class="con">
+        <div id="cssedit" class="edit"></div>
+        <!--<div class="dropzone"></div>-->
+        <div id="csspop" class="pop">
+          CSS
+        </div>
+      </div>
+      <div id="result">
+        <iframe>
+          #document
+          <html>
+            <body>
+            </body>
+          </html>
+        </iframe>
+        <div id="resultpop" class="pop">
+          <input type="text" class="iframedim" tabindex="1"></input>
+          x
+          <input type="text" class="iframedim" tabindex="2"></input>
+          RESULT
+          <img src="images/refresh.png"></img>
+        </div>
+      </div>
+    </div>
+
+    <script>
+var template = %FILLIN%
+    </script>
+    <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="built.js" type="text/javascript" charset="utf-8"></script>
+  </body>
+</html>

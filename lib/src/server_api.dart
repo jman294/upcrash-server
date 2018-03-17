@@ -48,7 +48,7 @@ class ServerApi {
   Future<Response> new_() async {
     Response res = new Response();
     res.headers['Content-Type'] = 'text/json';
-    Id id = new Id.pronounceable(7);
+    Id id = new Id.pronounceable();
     res.write(new JsonEncoder().convert({'newId': id.toString()}));
     return res;
   }
