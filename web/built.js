@@ -1,4 +1,6 @@
-var highlightSelection = true;
+var highlightSelection = true
+var saved = false
+var id
 
 var es = {
   js: {
@@ -45,7 +47,7 @@ if (template.jsShow !== undefined) {
 if (template.cssShow !== undefined) {
 }
 if (template.highlightElement !== undefined) {
-  highlightSelection = false;
+  highlightSelection = template.highlightElement;
 }
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
@@ -104,6 +106,18 @@ for (let e in es) {
   es[e].ace.setTheme('ace/theme/monokai')
 
   es[e].ace.on('change', function () {
+    if (!saved) {
+      saved = true
+      var oReq = new XMLHttpRequest()
+      oReq.onreadystatechange = function() {
+        if (this.readyState == 4) {
+          id = JSON.parse(this.responseText).newId
+          history.pushState(null, '', '/'+id);
+        }
+      }
+      oReq.open("GET", "/new")
+      oReq.send()
+    }
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
@@ -354,21 +368,28 @@ highlightCheck.addEventListener('change', (e) => {
 
 // SAVE
 function save () {
-  function reqListener () {
-    console.log('%csaved!', 'color: red')
+  if (id !== null) {
+    sendSaveRequest()
+  } else {
+    console.log('%cCannot save!', 'color: red');
   }
+}
 
+function sendSaveRequest () {
   template.js = es.js.ace.session.getValue()
   template.html = es.html.ace.session.getValue()
   template.css = es.css.ace.session.getValue()
   template.highlightElement = highlightSelection
 
   var oReq = new XMLHttpRequest()
-  oReq.addEventListener("load", reqListener)
-  oReq.open("POST", "http://dup.ly/save/wukupoha")
+  oReq.addEventListener('load', function () {
+    console.log('%csaved!', 'color: red')
+  })
+  oReq.open('POST', '/save/'+id)
   oReq.send(JSON.stringify(template))
 }
 
 window.onload = function () {
   resetIframe()
+  highlightCheck.checked = template.highlightCheck
 }
