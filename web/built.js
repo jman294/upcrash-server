@@ -143,7 +143,6 @@ for (let e in es) {
 
 var result = document.getElementById('result')
 const resetIframe = function () {
-  resultPop.style.display = 'block'
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
 
