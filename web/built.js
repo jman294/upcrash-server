@@ -390,6 +390,7 @@ function sendSaveRequest () {
 }
 
 window.onload = function () {
+  setResultSize()
   resetIframe()
-  highlightCheck.checked = template.highlightCheck
+  highlightCheck.checked = template.highlightElement
 }
