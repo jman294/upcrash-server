@@ -222,6 +222,15 @@ resultPop.addEventListener('click', function () {
   resetIframe()
 })
 
+window.addEventListener('resize', function () {
+  var iframe = document.getElementsByTagName('iframe')[0]
+  var resultSize = result.offsetHeight;
+  if (iframe.offsetHeight > resultSize) {
+    iframe.style.height = '100%'
+  }
+})
+
+
 // LAYOUT
 var contentBody = document.getElementById('body')
 var checkBoxes = document.getElementsByClassName('check')
