@@ -61,6 +61,7 @@ class ServerApi {
 
   Future<Response> feedback(String payload, String passw) async {
     Response res = new Response();
+    print(payload);
 
     GmailSmtpOptions opts = new GmailSmtpOptions()
       ..username = 'upcrashfeedback@gmail.com'
@@ -78,7 +79,6 @@ class ServerApi {
         .then((envelope) => print('Email sent!'))
         .catchError((e) => print('Error occurred: $e'));
 
-    print(passw);
     return res;
   }
 }
