@@ -74,10 +74,10 @@ class ServerApi {
       ..subject = 'Upcrash Feedback'
       ..text = payload;
 
-    trans
-        .send(envelope)
-        .then((envelope) => print('Email sent!'))
-        .catchError((e) => print('Error occurred: $e'));
+    await trans
+        .send(envelope);
+        //.then((envelope) => print('Email sent!'))
+        //.catchError((e) => print('Error occurred: $e'));
 
     return res;
   }
