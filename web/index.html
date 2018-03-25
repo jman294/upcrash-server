@@ -12,9 +12,16 @@
   <body>
     <div id="header">
       <img src="images/logo.png" alt="upcrash logo" title="Upcrash"></img>
-      <a href="">ABOUT</a>
-      <a href="">EMBED</a>
-      <a href="">NEW</a>
+      <a id="aboutbutton">ABOUT</a>
+      <!--<a class="popup">EMBED</a>-->
+      <a id="clone" class="popup">CLONE</a>
+      <a href="/">NEW</a>
+      <div id="modalover" class="modali"></div>
+      <div id="modal" class="modali">
+        Hey there! Thanks for checking out Upcrash. We welcome your feedback:
+        <textarea></textarea>
+        <button id="feedbutton">SEND</button>
+      </div>
       <input id="jscheck" class="check" type="checkbox" checked>JS</input>
       <input id="csscheck" class="check" type="checkbox" checked>CSS</input>
       <input id="htmlcheck" class="check" type="checkbox" checked>HTML</input>

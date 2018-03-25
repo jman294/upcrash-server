@@ -28,6 +28,70 @@ html, body {
 #header a:hover {
   color: #9e9e9e;
   text-decoration: underline;
+  cursor: pointer;
+}
+
+#modal {
+  position: absolute;
+  top: 50%;
+  right: 45%;
+
+  width: 200px;
+  height: 200px;
+
+  display: none;
+
+  padding: 8px;
+
+  background-color: #282828;
+  border: solid 3px #9d769e;
+
+  z-index: 100;
+}
+
+#modal textarea {
+  resize: none;
+  width: 192px;
+
+  height: 50px;
+
+  margin-top: 6px;
+}
+
+#modal button {
+  border: none;
+  background-color: #9d769e;
+
+  cursor: pointer;
+  outline: none;
+
+  border-bottom: solid 3px #483749;
+
+  color: #282828;
+}
+
+#modal button:active {
+  border-top: solid 3px #483749;
+  border-bottom: none;
+  outline: none;
+}
+
+#modalover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: none;
+
+  background-color: black;
+  opacity: 0.5;
+
+  z-index: 100;
 }
 
 #body {

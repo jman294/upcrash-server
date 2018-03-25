@@ -108,15 +108,7 @@ for (let e in es) {
   es[e].ace.on('change', function () {
     if (!saved) {
       saved = true
-      var oReq = new XMLHttpRequest()
-      oReq.onreadystatechange = function() {
-        if (this.readyState == 4) {
-          id = JSON.parse(this.responseText).newId
-          history.pushState(null, '', '/'+id);
-        }
-      }
-      oReq.open("GET", "/new")
-      oReq.send()
+      setNewId();
     }
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
@@ -397,8 +389,48 @@ function sendSaveRequest () {
   oReq.send(JSON.stringify(template))
 }
 
+function setNewId () {
+  var nReq = new XMLHttpRequest()
+  nReq.onreadystatechange = function() {
+    if (this.readyState == 4) {
+      id = JSON.parse(this.responseText).newId
+      history.pushState(null, '', '/'+id);
+    }
+  }
+  nReq.open("GET", "/new")
+  nReq.send()
+}
+
 window.onload = function () {
   setResultSize()
   resetIframe()
   highlightCheck.checked = template.highlightElement
 }
+
+// HEADER BUTTONS
+var aboutButton = document.getElementById('aboutbutton')
+var modalItems = document.getElementsByClassName('modali')
+var modalOver = modalItems[0]
+var sendFeedback = document.getElementById('feedbutton')
+var aboutModalState = false
+aboutButton.addEventListener('click', function () {
+  aboutModalState = !aboutModalState;
+  if (aboutModalState) {
+    for (var i=0; i<modalItems.length; i++) {
+      modalItems[i].style.display = 'block'
+    }
+  } else {
+    for (var i=0; i<modalItems.length; i++) {
+      modalItems[i].style.display = 'none'
+    }
+  }
+})
+modalOver.addEventListener('click', function () {
+  aboutModalState = false;
+  for (var i=0; i<modalItems.length; i++) {
+    modalItems[i].style.display = 'none'
+  }
+})
+sendFeedback.addEventListener('click', function () {
+  console.log('asdf')
+})
