@@ -412,6 +412,8 @@ var aboutButton = document.getElementById('aboutbutton')
 var modalItems = document.getElementsByClassName('modali')
 var modalOver = modalItems[0]
 var sendFeedback = document.getElementById('feedbutton')
+var feedbackArea = document.getElementById('feedarea')
+var notification = document.getElementById('noti')
 var aboutModalState = false
 aboutButton.addEventListener('click', function () {
   aboutModalState = !aboutModalState;
@@ -423,6 +425,7 @@ aboutButton.addEventListener('click', function () {
     for (var i=0; i<modalItems.length; i++) {
       modalItems[i].style.display = 'none'
     }
+    noti.style.display = 'none'
   }
 })
 modalOver.addEventListener('click', function () {
@@ -430,7 +433,10 @@ modalOver.addEventListener('click', function () {
   for (var i=0; i<modalItems.length; i++) {
     modalItems[i].style.display = 'none'
   }
+  noti.style.display = 'none'
 })
 sendFeedback.addEventListener('click', function () {
   console.log('asdf')
+  feedbackArea.value = ''
+  noti.style.display = 'block'
 })
