@@ -60,7 +60,6 @@ class UpcrashServer {
 
   Future handle(HttpRequest req) async {
     List<String> uriParts = req.uri.pathSegments;
-    Map<String, Function> apiMap = {'save': _serApi.save, 'new': _serApi.new_};
 
     Response resp = new Response();
     if (uriParts.length == 0) {
@@ -68,6 +67,9 @@ class UpcrashServer {
       resp.write(_templateString);
     } else {
       switch (uriParts[0]) {
+        case 'feedback':
+          resp = await _serApi.feedback(await UTF8.decodeStream(req), Platform.environment['PASSW']);
+          break;
         case 'save':
           if (uriParts.length == 2 && _isValidId(uriParts[1])) {
             Id id = new Id(uriParts[1]);
@@ -105,45 +107,10 @@ class UpcrashServer {
       }
     }
 
-    //if (_isValidUri(uriParts, apiMap)) {
-    //switch (uriParts.length) {
-    //case 0:
-    //resp.headers['content-type'] = 'text/html';
-    //resp.write(_templateString);
-    //break;
-    //case 1:
-    //if (uriParts[0] == 'new') {
-    //resp = await apiMap[uriParts[0]]();
-    //if (resp.e != null) {
-    //_log.warning(resp.e.cause, resp.e);
-    //}
-    //} else {
-    ////TODO check if valid id
-    //if (uriParts[0] != 'favicon.ico') {
-    //resp = await _serApi.load(new Id(uriParts[0]));
-    //}
-    //}
-    //break;
-    //case 2:
-    //Id id = new Id(uriParts[1]);
-    //Map<dynamic, dynamic> payload;
-    //try {
-    //payload = JSON.decode(await UTF8.decodeStream(req));
-    //resp = await _serApi.save(id, payload);
-    //} on FormatException {
-    //resp.statusCode = HttpStatus.BAD_REQUEST;
-    //resp.reasonPhrase = ServerErrors.invalidCrash;
-    //_log.warning('invalid crash attempted to be saved');
-    //}
-    //break;
-    //}
-    //} else {
-    //resp.statusCode = HttpStatus.NOT_FOUND;
-    //_log.warning('invalid uri');
-    //}
     if (resp.e != null) {
       _log.warning(resp.e.cause, resp.e);
     }
+
     _sendApiResponse(resp, req.response);
   }
 

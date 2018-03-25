@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:firebase/firebase_io.dart';
+import 'package:mailer/mailer.dart';
 import 'package:server/src/id.dart';
 import 'package:server/src/server_error.dart';
 import 'package:server/src/server_errors.dart';
@@ -55,6 +56,29 @@ class ServerApi {
     res.headers['Content-Type'] = 'text/json';
     Id id = new Id.pronounceable();
     res.write(new JsonEncoder().convert({'newId': id.toString()}));
+    return res;
+  }
+
+  Future<Response> feedback(String payload, String passw) async {
+    Response res = new Response();
+
+    GmailSmtpOptions opts = new GmailSmtpOptions()
+      ..username = 'upcrashfeedback@gmail.com'
+      ..password = passw;
+
+    SmtpTransport trans = new SmtpTransport(opts);
+    Envelope envelope = new Envelope()
+      ..from = 'jduplessis294@gmail.com'
+      ..recipients.add('jduplessis294@gmail.com')
+      ..subject = 'Upcrash Feedback'
+      ..text = payload;
+
+    trans
+        .send(envelope)
+        .then((envelope) => print('Email sent!'))
+        .catchError((e) => print('Error occurred: $e'));
+
+    print(passw);
     return res;
   }
 }

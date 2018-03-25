@@ -33,13 +33,17 @@ html, body {
 
 #modal {
   position: absolute;
-  top: 50%;
-  right: 45%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
+  height: 190px;
   width: 200px;
 
   display: none;
 
+  margin: auto;
   padding: 8px;
 
   border: solid 3px #9d769e;
@@ -50,15 +54,17 @@ html, body {
 }
 
 #modal textarea {
-  resize: none;
-  width: 192px;
-
+  width: 99%;
   height: 50px;
+
+  resize: none;
 
   margin-top: 6px;
 }
 
 #modal button {
+  margin-top: 5px;
+
   border: none;
   border-bottom: solid 3px #483749;
 
