@@ -436,7 +436,9 @@ modalOver.addEventListener('click', function () {
   noti.style.display = 'none'
 })
 sendFeedback.addEventListener('click', function () {
-  console.log('asdf')
-  feedbackArea.value = ''
   noti.style.display = 'block'
+  var fReq = new XMLHttpRequest()
+  fReq.open('POST', '/feedback')
+  fReq.send(feedbackArea.value)
+  feedbackArea.value = ''
 })
