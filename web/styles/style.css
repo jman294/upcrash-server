@@ -128,6 +128,17 @@ html, body {
   border-top: 1px solid grey;
 }
 
+.conhead {
+  padding-left: 2px;
+
+  background-color: #282828;
+
+  font-size: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: bold;
+  color: #9e9e9e;
+}
+
 #jscon {
   top: 0;
   right: 50%;
@@ -151,7 +162,7 @@ html, body {
 
 #jsedit {
   position: absolute;
-  top: 0;
+  top: 11px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -162,7 +173,7 @@ html, body {
 
 #cssedit {
   position: absolute;
-  top: 0;
+  top: 11px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -174,7 +185,7 @@ html, body {
 
 #htmledit {
   position: absolute;
-  top: 0;
+  top: 11px;
   right: 0;
   bottom: 0;
   left: 0;
