@@ -9,7 +9,6 @@ var es = {
     saveTimer: -1,
     container: document.querySelector('#jscon'),
     dropzone: document.querySelector('#jscon .dropzone'),
-    pop: document.querySelector('#jspop'),
     check: document.querySelector('#jscheck')
   },
   css: {
@@ -18,7 +17,6 @@ var es = {
     saveTimer: -1,
     container: document.querySelector('#csscon'),
     dropzone: document.querySelector('#csscon .dropzone'),
-    pop: document.querySelector('#csspop'),
     check: document.querySelector('#csscheck')
   },
   html: {
@@ -27,7 +25,6 @@ var es = {
     saveTimer: -1,
     container: document.querySelector('#htmlcon'),
     dropzone: document.querySelector('#htmlcon .dropzone'),
-    pop: document.querySelector('#htmlpop'),
     check: document.querySelector('#htmlcheck')
   }
 }
@@ -125,18 +122,14 @@ for (let e in es) {
       }
     )
   })
-  es[e].container.addEventListener('mouseenter', function () {
-    es[e].pop.style.display = 'block'
-  })
-  es[e].container.addEventListener('mouseleave', function () {
-    es[e].pop.style.display = 'none'
-  })
 }
 
 var result = document.getElementById('result')
-const resetIframe = function () {
+function resetIframe () {
+  var transform = result.firstElementChild.style.transform
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
+  newIframe.style.transform = transform
 
   var html
   if (highlightSelection) {
@@ -184,12 +177,13 @@ for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('input', function (e) {
     var rwidth = result.offsetWidth
     var rheight = result.offsetHeight
-    if (dims[0].value > rwidth) {
-      dims[0].value = rwidth
-    } else if (dims[1].value > rheight) {
-      dims[1].value = rheight
-    }
     resizeIframe(dims[0].value, dims[1].value)
+    var iframe = document.getElementsByTagName('iframe')[0]
+    if (dims[0].value > rwidth || dims[1].value > rheight) {
+      iframe.style.transform = 'scale('+result.offsetHeight/iframe.offsetHeight+')'
+    } else {
+      iframe.style.transform = 'scale(1)'
+    }
   })
 }
 function resizeIframe (width, height) {
@@ -209,15 +203,28 @@ result.addEventListener('mouseenter', function () {
 result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
-resultPop.addEventListener('click', function () {
+var refresh = document.getElementById('refresh')
+refresh.addEventListener('click', function () {
   resetIframe()
+})
+
+var fullSize = document.getElementById('fullsize')
+fullSize.addEventListener('click', function () {
+  var iframe = document.getElementsByTagName('iframe')[0]
+  iframe.style.transform = 'scale(1)'
+  iframe.style.width = '100%'
+  iframe.style.height = '100%'
+  dims[0].value = iframe.offsetWidth
+  dims[1].value = iframe.offsetHeight
 })
 
 window.addEventListener('resize', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
   var resultSize = result.offsetHeight;
   if (iframe.offsetHeight > resultSize) {
-    iframe.style.height = '100%'
+    iframe.style.transform = 'scale('+resultSize/iframe.offsetHeight+')'
+  } else {
+    iframe.style.transform = 'scale(1)'
   }
 })
 
@@ -227,6 +234,12 @@ for (var i=0; i<presets.length; i++) {
   presets[i].addEventListener('click', function (e) {
     var pwidth = e.target.getAttribute('data-pwidth'), pheight = e.target.getAttribute('data-pheight')
     resizeIframe(pwidth, pheight)
+    var iframe = document.getElementsByTagName('iframe')[0]
+    if (iframe.offsetHeight > result.offsetHeight) {
+      iframe.style.transform = 'scale('+result.offsetHeight/iframe.offsetHeight+')'
+    } else {
+      iframe.style.transform = 'scale(1)'
+    }
     dims[0].value = pwidth
     dims[1].value = pheight
   })
