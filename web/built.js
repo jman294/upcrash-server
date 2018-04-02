@@ -174,14 +174,14 @@ function setResultSize () {
   dims[1].value = iframe.offsetHeight
 }
 for (var t = 0; t<dims.length; t++) {
-  dims[t].addEventListener('keydown', (e) => {
+  dims[t].addEventListener('keydown', function (e) {
     var parsed = parseInt(e.key)
     if (e.keyCode === 8 || e.keyCode === 39 || e.keyCode === 37 || (e.keyCode === 65 && e.ctrlKey) || e.keyCode === 9) {
     } else if (isNaN(parsed)) {
       e.preventDefault()
     }
   })
-  dims[t].addEventListener('input', (e) => {
+  dims[t].addEventListener('input', function (e) {
     var rwidth = result.offsetWidth
     var rheight = result.offsetHeight
     if (dims[0].value > rwidth) {
@@ -229,7 +229,7 @@ var checkBoxes = document.getElementsByClassName('check')
 for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
   el.checked = 'true'
-  el.addEventListener('change', (e) => {
+  el.addEventListener('change', function (e) {
     var numEditors = contentBody.children.length-1
     if (e.target.checked) {
       es.js.check.disabled = false
@@ -357,7 +357,7 @@ for (var i=0; i<checkBoxes.length; i++) {
 }
 
 var highlightCheck = document.getElementById('highlight')
-highlightCheck.addEventListener('change', (e) => {
+highlightCheck.addEventListener('change', function (e) {
   if (e.target.checked) {
     highlightSelection = true
   } else {

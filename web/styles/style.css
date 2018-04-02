@@ -285,3 +285,16 @@ iframe {
 .ace_scrollbar-h {
   height: 6px !important;
 }
+
+@media screen and (max-width: 500px) {
+  #result {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  .con, .edit, .checkc, #new, #clone {
+    display: none;
+  }
+}

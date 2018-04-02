@@ -3,6 +3,8 @@
   <head>
     <title>Upcrash</title>
 
+    <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
+
     <link href="styles/style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
@@ -15,7 +17,7 @@
       <a id="aboutbutton">ABOUT</a>
       <!--<a class="popup">EMBED</a>-->
       <a id="clone" class="popup">CLONE</a>
-      <a href="/">NEW</a>
+      <a id="new" href="/">NEW</a>
       <div id="modalover" class="modali"></div>
       <div id="modal" class="modali">
         <b>Hey there!</b> Thanks for checking out Upcrash. Prototype, create, and share web snippets! <a href="https://github.com/jman294/upcrash-server" target="_blank">Visit the Github here</a>
@@ -26,10 +28,10 @@
         <button id="feedbutton">SEND</button>
         <div id="noti">Sent!</div>
       </div>
-      <input id="jscheck" class="check" type="checkbox" checked>JS</input>
-      <input id="csscheck" class="check" type="checkbox" checked>CSS</input>
-      <input id="htmlcheck" class="check" type="checkbox" checked>HTML</input>
-      <input id="highlight" class="check" type="checkbox" checked>Highlight edited element?</input>
+      <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
+      <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
+      <span class="checkc"><input id="htmlcheck" class="check" type="checkbox" checked>HTML</span>
+      <span class="checkc"><input id="highlight" class="check" type="checkbox" checked>Highlight edited element?</span>
     </div>
 
     <div id="body">
