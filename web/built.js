@@ -154,6 +154,7 @@ function resetIframe () {
   var jsEl = newIframe.contentDocument.createElement('script')
   jsEl.innerHTML = js
   newIframe.contentDocument.body.appendChild(jsEl)
+  resizeIframe(dims[0].value, dims[1].value)
 }
 
 // RESIZE IFRAME
@@ -176,15 +177,29 @@ for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('input', function (e) {
     var rwidth = result.offsetWidth
     var rheight = result.offsetHeight
-    resizeIframe(dims[0].value, dims[1].value)
     var iframe = document.getElementsByTagName('iframe')[0]
-    if (dims[0].value > rwidth) {
-      iframe.style.transform = 'scale('+rwidth/iframe.offsetWidth+')'
-    } else if (dims[1].value > rheight) {
-      iframe.style.transform = 'scale('+rheight/iframe.offsetHeight+')'
+    if (dims[0].value > dims[1].value) {
+      if (dims[0].value > rwidth) {
+        iframe.style.transform = 'scale('+rwidth/dims[0].value+')'
+        console.log(iframe.style.transform)
+      } else {
+        iframe.style.transform = 'scale(1)'
+      }
     } else {
-      iframe.style.transform = 'scale(1)'
+      if (dims[1].value > rheight) {
+        iframe.style.transform = 'scale('+rheight/dims[1].value+')'
+      } else {
+        iframe.style.transform = 'scale(1)'
+      }
     }
+    resizeIframe(dims[0].value, dims[1].value)
+    //if (dims[0].value > rwidth) {
+      //iframe.style.transform = 'scale('+rwidth/iframe.offsetWidth+')'
+    //} else if (dims[1].value > rheight) {
+      //iframe.style.transform = 'scale('+rheight/iframe.offsetHeight+')'
+    //} else {
+      //iframe.style.transform = 'scale(1)'
+    //}
   })
 }
 function resizeIframe (width, height) {
@@ -222,7 +237,7 @@ fullSize.addEventListener('click', function () {
 window.addEventListener('resize', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
   var resultSize = result.offsetHeight;
-  if (iframe.style.height != '100%') {
+  if (iframe.offsetHeight > resultSize) {
     iframe.style.transform = 'scale('+resultSize/iframe.offsetHeight+')'
   } else {
     iframe.style.transform = 'scale(1)'
@@ -238,6 +253,8 @@ for (var i=0; i<presets.length; i++) {
     var iframe = document.getElementsByTagName('iframe')[0]
     if (iframe.offsetHeight > result.offsetHeight) {
       iframe.style.transform = 'scale('+result.offsetHeight/iframe.offsetHeight+')'
+    } else if (iframe.offsetWidth > result.offsetWidth) {
+      iframe.style.transform = 'scale('+result.offsetWidth/iframe.offsetWidth+')'
     } else {
       iframe.style.transform = 'scale(1)'
     }
@@ -429,6 +446,7 @@ window.onload = function () {
   setResultSize()
   resetIframe()
   highlightCheck.checked = template.highlightElement
+  var iframe = document.getElementsByTagName('iframe')[0]
 }
 
 // HEADER BUTTONS

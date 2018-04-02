@@ -334,7 +334,7 @@ iframe {
   height: 6px !important;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 595px) {
   #result {
     top: 0;
     right: 0;
