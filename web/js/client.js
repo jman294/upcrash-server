@@ -190,10 +190,10 @@ for (var t = 0; t<dims.length; t++) {
       dims[1].value = rheight
     }
     resizeIframe(dims[0].value, dims[1].value)
-
   })
 }
 function resizeIframe (width, height) {
+  console.log('asdf')
   var iframe = document.getElementsByTagName('iframe')[0]
 
   var rwidth = result.offsetWidth
@@ -221,6 +221,18 @@ window.addEventListener('resize', function () {
     iframe.style.height = '100%'
   }
 })
+
+//// Presets
+var presets = document.getElementsByClassName('preset')
+for (var i=0; i<presets.length; i++) {
+  presets[i].addEventListener('click', (e) => {
+    console.log(e.target.getAttribute('data-pwidth'))
+    var pwidth = e.target.getAttribute('data-pwidth'), pheight = e.target.getAttribute('data-pheight')
+    resizeIframe(pwidth, pheight)
+    dims[0].value = pwidth
+    dims[1].value = pheight
+  })
+}
 
 
 // LAYOUT
