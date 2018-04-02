@@ -251,9 +251,10 @@ html, body {
 .dropdown-content {
   display: none;
   position: absolute;
+  right: 0;
 
   background-color: #f9f9f9;
-  min-width: 100px;
+  min-width: 150px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 
   z-index: 1;
@@ -268,7 +269,7 @@ html, body {
 }
 
 .dropdown-content span:hover {
-  background-color: #f1f1f1
+  background-color: #b1b1b1
 }
 
 .dropdown:hover .dropdown-content {

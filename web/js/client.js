@@ -154,7 +154,6 @@ function resetIframe () {
   var jsEl = newIframe.contentDocument.createElement('script')
   jsEl.innerHTML = js
   newIframe.contentDocument.body.appendChild(jsEl)
-  resizeIframe(dims[0].value, dims[1].value)
 }
 
 // RESIZE IFRAME
@@ -179,8 +178,10 @@ for (var t = 0; t<dims.length; t++) {
     var rheight = result.offsetHeight
     resizeIframe(dims[0].value, dims[1].value)
     var iframe = document.getElementsByTagName('iframe')[0]
-    if (dims[0].value > rwidth || dims[1].value > rheight) {
-      iframe.style.transform = 'scale('+result.offsetHeight/iframe.offsetHeight+')'
+    if (dims[0].value > rwidth) {
+      iframe.style.transform = 'scale('+rwidth/iframe.offsetWidth+')'
+    } else if (dims[1].value > rheight) {
+      iframe.style.transform = 'scale('+rheight/iframe.offsetHeight+')'
     } else {
       iframe.style.transform = 'scale(1)'
     }
@@ -221,7 +222,7 @@ fullSize.addEventListener('click', function () {
 window.addEventListener('resize', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
   var resultSize = result.offsetHeight;
-  if (iframe.offsetHeight > resultSize) {
+  if (iframe.style.height != '100%') {
     iframe.style.transform = 'scale('+resultSize/iframe.offsetHeight+')'
   } else {
     iframe.style.transform = 'scale(1)'
