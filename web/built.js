@@ -193,7 +193,6 @@ for (var t = 0; t<dims.length; t++) {
   })
 }
 function resizeIframe (width, height) {
-  console.log('asdf')
   var iframe = document.getElementsByTagName('iframe')[0]
 
   var rwidth = result.offsetWidth
@@ -226,7 +225,6 @@ window.addEventListener('resize', function () {
 var presets = document.getElementsByClassName('preset')
 for (var i=0; i<presets.length; i++) {
   presets[i].addEventListener('click', function (e) {
-    console.log(e.target.getAttribute('data-pwidth'))
     var pwidth = e.target.getAttribute('data-pwidth'), pheight = e.target.getAttribute('data-pheight')
     resizeIframe(pwidth, pheight)
     dims[0].value = pwidth
@@ -453,4 +451,18 @@ sendFeedback.addEventListener('click', function () {
   fReq.open('POST', '/feedback')
   fReq.send(feedbackArea.value)
   feedbackArea.value = ''
+})
+
+var newLink = document.getElementById('new')
+newLink.addEventListener('click', function (e) {
+  e.preventDefault()
+  setNewId()
+  for (var i in es) {
+    es[i].ace.setValue('')
+  }
+})
+var cloneLink = document.getElementById('clone')
+cloneLink.addEventListener('click', function (e) {
+  e.preventDefault()
+  setNewId()
 })
