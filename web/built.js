@@ -178,28 +178,20 @@ for (var t = 0; t<dims.length; t++) {
     var rwidth = result.offsetWidth
     var rheight = result.offsetHeight
     var iframe = document.getElementsByTagName('iframe')[0]
-    if (dims[0].value > dims[1].value) {
-      if (dims[0].value > rwidth) {
+    if (parseInt(dims[0].value) > parseInt(dims[1].value)) {
+      if (parseInt(dims[0].value) > rwidth) {
         iframe.style.transform = 'scale('+rwidth/dims[0].value+')'
-        console.log(iframe.style.transform)
       } else {
         iframe.style.transform = 'scale(1)'
       }
     } else {
-      if (dims[1].value > rheight) {
+      if (parseInt(dims[1].value) > rheight) {
         iframe.style.transform = 'scale('+rheight/dims[1].value+')'
       } else {
         iframe.style.transform = 'scale(1)'
       }
     }
     resizeIframe(dims[0].value, dims[1].value)
-    //if (dims[0].value > rwidth) {
-      //iframe.style.transform = 'scale('+rwidth/iframe.offsetWidth+')'
-    //} else if (dims[1].value > rheight) {
-      //iframe.style.transform = 'scale('+rheight/iframe.offsetHeight+')'
-    //} else {
-      //iframe.style.transform = 'scale(1)'
-    //}
   })
 }
 function resizeIframe (width, height) {
@@ -236,9 +228,12 @@ fullSize.addEventListener('click', function () {
 
 window.addEventListener('resize', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
-  var resultSize = result.offsetHeight;
-  if (iframe.offsetHeight > resultSize) {
-    iframe.style.transform = 'scale('+resultSize/iframe.offsetHeight+')'
+  var resultHeight = result.offsetHeight;
+  var resultWidth = result.offsetWidth;
+  if (iframe.offsetHeight > resultHeight) {
+    iframe.style.transform = 'scale('+resultHeight/iframe.offsetHeight+')'
+  } else if (iframe.offsetWidth > resultWidth) {
+    iframe.style.transform = 'scale('+resultWidth/iframe.offsetWidth+')'
   } else {
     iframe.style.transform = 'scale(1)'
   }
