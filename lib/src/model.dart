@@ -8,11 +8,13 @@ class Model {
   bool jsShow;
   bool htmlShow;
   bool cssShow;
+  bool highlightElement;
 
-  Model(this.js, this.html, this.css, this.jsShow, this.htmlShow, this.cssShow);
+  Model(this.js, this.html, this.css, this.jsShow, this.htmlShow, this.cssShow,
+        this.highlightElement);
 
   factory Model.default_() {
-    return new Model("", "", "", true, true, true);
+    return new Model("", "", "", true, true, true, false);
   }
 
   Map toJson() {
@@ -23,6 +25,7 @@ class Model {
     map["jsShow"] = jsShow;
     map["htmlShow"] = htmlShow;
     map["cssShow"] = cssShow;
+    map["highlightElement"] = highlightElement;
     return map;
   }
 }

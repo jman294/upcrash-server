@@ -1,6 +1,7 @@
 var highlightSelection = true
 var saved = false
 var id
+var model
 
 var es = {
   js: {
@@ -28,24 +29,14 @@ var es = {
     check: document.querySelector('#htmlcheck')
   }
 }
-if (template.html !== undefined) {
-  es.html.ace.setValue(template.html, -1)
-}
-if (template.js !== undefined) {
-  es.js.ace.setValue(template.js, -1)
-}
-if (template.css !== undefined) {
-  es.css.ace.setValue(template.css, -1)
-}
-if (template.htmlShow !== undefined) {
-}
-if (template.jsShow !== undefined) {
-}
-if (template.cssShow !== undefined) {
-}
-if (template.highlightElement !== undefined) {
-  highlightSelection = template.highlightElement;
-}
+model = new Model(template)
+es.html.ace.setValue(template.html, -1)
+es.js.ace.setValue(template.js, -1)
+es.css.ace.setValue(template.css, -1)
+//model.htmlShow
+//model.jsShow
+//model.cssShow
+highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
 es.js.ace.getSession().setTabSize(2)
@@ -399,17 +390,17 @@ function save () {
 }
 
 function sendSaveRequest () {
-  template.js = es.js.ace.session.getValue()
-  template.html = es.html.ace.session.getValue()
-  template.css = es.css.ace.session.getValue()
-  template.highlightElement = highlightSelection
+  model.js = es.js.ace.session.getValue()
+  model.html = es.html.ace.session.getValue()
+  model.css = es.css.ace.session.getValue()
+  model.highlightElement = highlightSelection
 
   var oReq = new XMLHttpRequest()
   oReq.addEventListener('load', function () {
     console.log('%csaved!', 'color: red')
   })
   oReq.open('POST', '/save/'+id)
-  oReq.send(JSON.stringify(template))
+  oReq.send(JSON.stringify(model))
 }
 
 function setNewId () {

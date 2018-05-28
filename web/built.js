@@ -1,6 +1,7 @@
 var highlightSelection = true
 var saved = false
 var id
+var model
 
 var es = {
   js: {
@@ -28,24 +29,14 @@ var es = {
     check: document.querySelector('#htmlcheck')
   }
 }
-if (template.html !== undefined) {
-  es.html.ace.setValue(template.html, -1)
-}
-if (template.js !== undefined) {
-  es.js.ace.setValue(template.js, -1)
-}
-if (template.css !== undefined) {
-  es.css.ace.setValue(template.css, -1)
-}
-if (template.htmlShow !== undefined) {
-}
-if (template.jsShow !== undefined) {
-}
-if (template.cssShow !== undefined) {
-}
-if (template.highlightElement !== undefined) {
-  highlightSelection = template.highlightElement;
-}
+model = new Model(template)
+es.html.ace.setValue(template.html, -1)
+es.js.ace.setValue(template.js, -1)
+es.css.ace.setValue(template.css, -1)
+//model.htmlShow
+//model.jsShow
+//model.cssShow
+highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
 es.js.ace.getSession().setTabSize(2)
@@ -159,7 +150,7 @@ function resetIframe () {
 
 // RESIZE IFRAME
 var fullSize = document.getElementById('fullsize')
-var resultPop = document.querySelector('#resultpop')
+var resultPop = document.getElementById('resultpop')
 var dims = document.getElementsByClassName('iframedim')
 function setResultSize () {
   var iframe = document.getElementsByTagName('iframe')[0]
@@ -224,19 +215,6 @@ fullSize.addEventListener('click', function () {
   iframe.style.height = '100%'
   dims[0].value = iframe.offsetWidth
   dims[1].value = iframe.offsetHeight
-})
-
-window.addEventListener('resize', function () {
-  var iframe = document.getElementsByTagName('iframe')[0]
-  var resultHeight = result.offsetHeight;
-  var resultWidth = result.offsetWidth;
-  if (iframe.offsetHeight > resultHeight) {
-    iframe.style.transform = 'scale('+resultHeight/iframe.offsetHeight+')'
-  } else if (iframe.offsetWidth > resultWidth) {
-    iframe.style.transform = 'scale('+resultWidth/iframe.offsetWidth+')'
-  } else {
-    iframe.style.transform = 'scale(1)'
-  }
 })
 
 //// Presets
@@ -412,17 +390,17 @@ function save () {
 }
 
 function sendSaveRequest () {
-  template.js = es.js.ace.session.getValue()
-  template.html = es.html.ace.session.getValue()
-  template.css = es.css.ace.session.getValue()
-  template.highlightElement = highlightSelection
+  model.js = es.js.ace.session.getValue()
+  model.html = es.html.ace.session.getValue()
+  model.css = es.css.ace.session.getValue()
+  model.highlightElement = highlightSelection
 
   var oReq = new XMLHttpRequest()
   oReq.addEventListener('load', function () {
     console.log('%csaved!', 'color: red')
   })
   oReq.open('POST', '/save/'+id)
-  oReq.send(JSON.stringify(template))
+  oReq.send(JSON.stringify(model))
 }
 
 function setNewId () {
@@ -493,3 +471,16 @@ cloneLink.addEventListener('click', function (e) {
   e.preventDefault()
   setNewId()
 })
+function Model (obj) {
+  this.js = ""
+  this.html = ""
+  this.css = ""
+
+  this.jsShow = true
+  this.htmlShow = true
+  this.cssShow = true
+
+  this.highlightElement = false
+
+  for (var prop in obj) this[prop] = obj[prop];
+}
