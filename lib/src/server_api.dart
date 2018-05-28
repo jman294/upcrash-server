@@ -11,20 +11,38 @@ import 'package:server/src/id.dart';
 import 'package:server/src/server_error.dart';
 import 'package:server/src/server_errors.dart';
 import 'package:server/src/response.dart';
+import 'package:server/src/model.dart';
 
 class ServerApi {
   FirebaseClient _db;
   String _host;
-  String _template;
-  ServerApi(this._db, this._host, this._template);
+  String _homePage;
+  String _homePageRaw;
+  final String _toReplace = '%FILLIN%';
+  String _modelJson;
+
+  ServerApi(this._db, this._host);
+
+  Future init() async {
+    _modelJson = JSON.encode(new Model.default_());
+
+    final String homePagePath = 'web/index.html';
+    try {
+      _homePageRaw = await new File(homePagePath).readAsString();
+    } on FileSystemException catch(e) {
+      throw e;
+    }
+    _homePage = _homePageRaw.replaceAll(_toReplace, _modelJson);
+  }
+
+  Future<Response> home() async {
+    Response res = new Response();
+    res.headers['content-type'] = 'text/html';
+    res.write(_homePage);
+    return res;
+  }
 
   Future<Response> save(Id id, Map<dynamic, dynamic> payload) async {
-    //final String results =
-    //await _db.get('$_host/$id.json');
-    //if (results == null) {
-    //return new Response.error(
-    //HttpStatus.NOT_FOUND, new ServerException(ServerErrors.crashNotFound));
-    //} else {
     try {
       var results = await _db.put('$_host/$id.json', payload);
       Response res = new Response();
@@ -35,7 +53,6 @@ class ServerApi {
           HttpStatus.BAD_REQUEST, new ServerException('Authorization error'));
       return res;
     }
-    //}
   }
 
   Future<Response> load(Id id) async {
@@ -46,7 +63,7 @@ class ServerApi {
     } else {
       Response res = new Response();
       res.headers['content-type'] = 'text/html';
-      res.write(_template.replaceAll('%FILLIN%', JSON.encode(results)));
+      res.write(_homePageRaw.replaceAll(_toReplace, JSON.encode(results)));
       return res;
     }
   }

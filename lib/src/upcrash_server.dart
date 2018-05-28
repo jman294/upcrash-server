@@ -19,7 +19,6 @@ class UpcrashServer {
   final Logger _log = new Logger('UpcrashServer');
   ServerApi _serApi;
   FirebaseClient _fbClient;
-  String _templateString;
 
   UpcrashServer() {
     Logger.root
@@ -28,17 +27,12 @@ class UpcrashServer {
   }
 
   Future auth() async {
-    final rawTemplateString = await new File('web/index.html').readAsString();
-    final String blank =
-        "{html: '',css: '',js: '',htmlShow: true,jsShow: true,cssShow: true,highlightElement: true}";
-    _templateString = rawTemplateString.replaceAll('%FILLIN%', blank);
     final Map<String, String> envVars = Platform.environment;
     String privateKey;
-
     if (envVars['WEBSITEU'] != null) {
       privateKey = (await http.get(envVars['WEBSITEU'])).body;
     } else {
-      throw new Exception('Could not Authenticate');
+      throw new ServerException(ServerErrors.couldNotAuthenticate);
     }
 
     final String json = new JsonDecoder().convert(privateKey);
@@ -54,7 +48,12 @@ class UpcrashServer {
             accountCredentials, scopes, client);
     _fbClient = new FirebaseClient(credentials.accessToken.data);
     _serApi = new ServerApi(
-        _fbClient, 'https://upcrash-server.firebaseio.com/', rawTemplateString);
+        _fbClient, 'https://upcrash-server.firebaseio.com/');
+    try {
+      await _serApi.init();
+    } on FileSystemException {
+      throw new ServerException(ServerErrors.couldNotAuthenticate);
+    }
     client.close();
   }
 
@@ -63,8 +62,7 @@ class UpcrashServer {
 
     Response resp = new Response();
     if (uriParts.length == 0) {
-      resp.headers['content-type'] = 'text/html';
-      resp.write(_templateString);
+      resp = await _serApi.home();
     } else {
       switch (uriParts[0]) {
         case 'feedback':

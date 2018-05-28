@@ -159,7 +159,7 @@ function resetIframe () {
 
 // RESIZE IFRAME
 var fullSize = document.getElementById('fullsize')
-var resultPop = document.querySelector('#resultpop')
+var resultPop = document.getElementById('resultpop')
 var dims = document.getElementsByClassName('iframedim')
 function setResultSize () {
   var iframe = document.getElementsByTagName('iframe')[0]
@@ -224,19 +224,6 @@ fullSize.addEventListener('click', function () {
   iframe.style.height = '100%'
   dims[0].value = iframe.offsetWidth
   dims[1].value = iframe.offsetHeight
-})
-
-window.addEventListener('resize', function () {
-  var iframe = document.getElementsByTagName('iframe')[0]
-  var resultHeight = result.offsetHeight;
-  var resultWidth = result.offsetWidth;
-  if (iframe.offsetHeight > resultHeight) {
-    iframe.style.transform = 'scale('+resultHeight/iframe.offsetHeight+')'
-  } else if (iframe.offsetWidth > resultWidth) {
-    iframe.style.transform = 'scale('+resultWidth/iframe.offsetWidth+')'
-  } else {
-    iframe.style.transform = 'scale(1)'
-  }
 })
 
 //// Presets
