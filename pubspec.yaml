@@ -1,9 +1,7 @@
 name: server
 description: Backend for upcrash
 dependencies:
-  uri:
-    git: git://github.com/google/uri.dart.git
-    version: "0.11.1"
+  uri: "^0.11.1"
   convert: "^2.0.0"
   test: "^0.12.29+1"
   mockito: "^2.2.1"
