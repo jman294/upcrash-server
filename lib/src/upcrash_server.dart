@@ -71,15 +71,7 @@ class UpcrashServer {
         case 'save':
           if (uriParts.length == 2 && _isValidId(uriParts[1])) {
             Id id = new Id(uriParts[1]);
-            Map<dynamic, dynamic> payload;
-            try {
-              payload = JSON.decode(await UTF8.decodeStream(req));
-              resp = await _serApi.save(id, payload);
-            } on FormatException {
-              resp.statusCode = HttpStatus.BAD_REQUEST;
-              resp.reasonPhrase = ServerErrors.invalidCrash;
-              _log.warning('invalid crash attempted to be saved');
-            }
+            resp = await _serApi.save(req, id);
           } else {
             resp = new Response.error(HttpStatus.NOT_FOUND,
                 new ServerException(ServerErrors.invalidUri));

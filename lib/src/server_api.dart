@@ -29,7 +29,7 @@ class ServerApi {
     final String homePagePath = 'web/index.html';
     try {
       _homePageRaw = await new File(homePagePath).readAsString();
-    } on FileSystemException catch(e) {
+    } on FileSystemException catch (e) {
       throw e;
     }
     _homePage = _homePageRaw.replaceAll(_toReplace, _modelJson);
@@ -42,16 +42,24 @@ class ServerApi {
     return res;
   }
 
-  Future<Response> save(Id id, Map<dynamic, dynamic> payload) async {
+  Future<Response> save(HttpRequest req, Id id) async {
+    Map<dynamic, dynamic> payload;
     try {
-      var results = await _db.put('$_host/$id.json', payload);
-      Response res = new Response();
-      res.write(results.toString());
-      return res;
-    } on Exception {
-      Response res = Response.error(
-          HttpStatus.BAD_REQUEST, new ServerException('Authorization error'));
-      return res;
+      payload = JSON.decode(await UTF8.decodeStream(req));
+    } on FormatException {
+      return new Response.error(HttpStatus.BAD_REQUEST,
+          new ServerException(ServerErrors.invalidCrash));
+    } finally {
+      try {
+        var results = await _db.put('$_host/$id.json', payload);
+        Response res = new Response();
+        res.write(results.toString());
+        return res;
+      } on Exception {
+        Response res = new Response.error(HttpStatus.BAD_REQUEST,
+            new ServerException(ServerErrors.invalidCrash));
+        return res;
+      }
     }
   }
 
