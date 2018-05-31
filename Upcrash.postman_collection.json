@@ -1,0 +1,123 @@
+{
+	"info": {
+		"name": "Upcrash",
+		"_postman_id": "f9b2f70c-8f1f-3a6d-fa8e-43ae2daa5ab9",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "save incorrect crash model",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "wrong content"
+				},
+				"url": {
+					"raw": "dup.ly/save/wukupoha",
+					"host": [
+						"dup",
+						"ly"
+					],
+					"path": [
+						"save",
+						"wukupoha"
+					]
+				},
+				"description": "Upcrash Server save crash"
+			},
+			"response": []
+		},
+		{
+			"name": "get a corrupted crash",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "dup.ly/wukupoha",
+					"host": [
+						"dup",
+						"ly"
+					],
+					"path": [
+						"wukupoha"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get a correct crash",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "dup.ly/xogadisu",
+					"host": [
+						"dup",
+						"ly"
+					],
+					"path": [
+						"xogadisu"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get a 404 url",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "dup.ly/farts",
+					"host": [
+						"dup",
+						"ly"
+					],
+					"path": [
+						"farts"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "save a correct crash",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"js\":  \"\",\n\t\"html\":\"\",\n\t\"css\":\"\",\n\t\"cssShow\":true,\n\t\"jsShow\":true,\n\t\"htmlShow\":true,\n\t\"highlightElement\":true\n}"
+				},
+				"url": {
+					"raw": "dup.ly/save/wolaxiti",
+					"host": [
+						"dup",
+						"ly"
+					],
+					"path": [
+						"save",
+						"wolaxiti"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
