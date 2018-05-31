@@ -44,6 +44,7 @@ class ServerApi {
 
   Future<Response> save(HttpRequest req, Id id) async {
     Map<dynamic, dynamic> payload;
+    //TODO errors in here are a little redundant
     try {
       payload = JSON.decode(await UTF8.decodeStream(req));
     } on FormatException {
@@ -66,13 +67,20 @@ class ServerApi {
   Future<Response> load(Id id) async {
     final dynamic results = await _db.get('$_host/$id.json');
     if (results == null) {
+      //TODO add dedicated 404 error page that says sorry
       return new Response.error(HttpStatus.NOT_FOUND,
           new ServerException(ServerErrors.crashNotFound));
     } else {
-      Response res = new Response();
-      res.headers['content-type'] = 'text/html';
-      res.write(_homePageRaw.replaceAll(_toReplace, JSON.encode(results)));
-      return res;
+      if (Model.conformsToModel(results)) {
+        Response res = new Response();
+        res.headers['content-type'] = 'text/html';
+        res.write(_homePageRaw.replaceAll(_toReplace, JSON.encode(results)));
+        return res;
+      } else {
+        //TODO add dedicated error page that says sorry
+        return new Response.error(HttpStatus.INTERNAL_SERVER_ERROR,
+            new ServerException('it seems a crash was corrupted'));
+      }
     }
   }
 

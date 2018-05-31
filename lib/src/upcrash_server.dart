@@ -73,6 +73,7 @@ class UpcrashServer {
             Id id = new Id(uriParts[1]);
             resp = await _serApi.save(req, id);
           } else {
+            //TODO add dedicated 404 error page that says sorry
             resp = new Response.error(HttpStatus.NOT_FOUND,
                 new ServerException(ServerErrors.invalidUri));
           }
@@ -89,6 +90,7 @@ class UpcrashServer {
               resp.add(fileBytes);
               resp.headers['Content-Type'] = mime(req.uri.toFilePath());
             } on FileSystemException {
+              //TODO add dedicated 404 error page that says sorry
               resp = new Response.error(HttpStatus.NOT_FOUND,
                   new ServerException(ServerErrors.invalidUri));
             }
