@@ -417,7 +417,6 @@ function setNewId () {
 
 window.onload = function () {
   setResultSize()
-  resetIframe()
   highlightCheck.checked = template.highlightElement
   var iframe = document.getElementsByTagName('iframe')[0]
 }

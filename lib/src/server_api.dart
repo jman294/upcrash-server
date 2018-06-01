@@ -19,6 +19,7 @@ class ServerApi {
   String _homePage;
   String _homePageRaw;
   final String _toReplace = '%FILLIN%';
+  final String _toReplaceId = '%ID%';
   String _modelJson;
 
   ServerApi(this._db, this._host);
@@ -74,7 +75,8 @@ class ServerApi {
       if (Model.conformsToModel(results)) {
         Response res = new Response();
         res.headers['content-type'] = 'text/html';
-        res.write(_homePageRaw.replaceAll(_toReplace, JSON.encode(results)));
+        res.write(_homePageRaw.replaceAll(_toReplace, JSON.encode(results))
+                              .replaceAll(_toReplaceId, id.toString()));
         return res;
       } else {
         //TODO add dedicated error page that says sorry
