@@ -100,7 +100,7 @@ class UpcrashServer {
     }
 
     if (resp.e != null) {
-      _log.warning(resp.e.cause, resp.e);
+      _log.warning(resp.e.cause + ' ' + req.requestedUri.toString(), resp.e);
     }
 
     _sendApiResponse(resp, req.response);
