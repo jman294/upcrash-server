@@ -44,23 +44,46 @@ class ServerApi {
   }
 
   Future<Response> save(HttpRequest req, Id id) async {
-    Map<dynamic, dynamic> payload;
-    //TODO errors in here are a little redundant
+    var exists = true;
     try {
-      payload = JSON.decode(await UTF8.decodeStream(req));
-    } on FormatException {
+      var results = await _db.get('$_host/$id.json');
+      exists = results != null && results['js'] != null;
+    } on Exception {
       return new Response.error(HttpStatus.BAD_REQUEST,
-          new ServerException(ServerErrors.invalidCrash));
-    } finally {
+          new ServerException(ServerErrors.crashNotFound));
+    }
+
+    bool canEdit = false;
+    if (exists) {
+      if (req.session['id'] == id.toString()) {
+        canEdit = true;
+      } else {
+        return new Response.error(
+            HttpStatus.UNAUTHORIZED, new ServerException('preexisting crash'));
+      }
+    } else {
+      req.session['id'] = id.toString();
+      canEdit = true;
+    }
+
+    if (canEdit) {
+      Map<dynamic, dynamic> payload;
+      //TODO errors in here are a little redundant
       try {
-        var results = await _db.put('$_host/$id.json', payload);
-        Response res = new Response();
-        res.write(results.toString());
-        return res;
-      } on Exception {
-        Response res = new Response.error(HttpStatus.BAD_REQUEST,
+        payload = JSON.decode(await UTF8.decodeStream(req));
+      } on FormatException {
+        return new Response.error(HttpStatus.BAD_REQUEST,
             new ServerException(ServerErrors.invalidCrash));
-        return res;
+      } finally {
+        try {
+          var results = await _db.put('$_host/$id.json', payload);
+          Response res = new Response();
+          res.write(results.toString());
+          return res;
+        } on Exception {
+          return new Response.error(HttpStatus.BAD_REQUEST,
+              new ServerException(ServerErrors.invalidCrash));
+        }
       }
     }
   }
@@ -75,8 +98,9 @@ class ServerApi {
       if (Model.conformsToModel(results)) {
         Response res = new Response();
         res.headers['content-type'] = 'text/html';
-        res.write(_homePageRaw.replaceAll(_toReplace, JSON.encode(results))
-                              .replaceAll(_toReplaceId, id.toString()));
+        res.write(_homePageRaw
+            .replaceAll(_toReplace, JSON.encode(results))
+            .replaceAll(_toReplaceId, id.toString()));
         return res;
       } else {
         //TODO add dedicated error page that says sorry

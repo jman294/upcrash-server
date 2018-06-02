@@ -1,6 +1,5 @@
 var highlightSelection = true
 var saved = false
-var id
 var model
 
 var es = {
@@ -94,10 +93,10 @@ for (let e in es) {
   es[e].ace.setTheme('ace/theme/monokai')
 
   es[e].ace.on('change', function () {
-    if (!saved) {
-      saved = true
-      setNewId();
-    }
+    //if (!saved) {
+    //saved = true
+    //setNewId();
+    //}
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
@@ -382,36 +381,43 @@ highlightCheck.addEventListener('change', function (e) {
 
 // SAVE
 function save () {
-  if (id !== null) {
-    sendSaveRequest()
+  function sendRequest () {
+    model.js = es.js.ace.session.getValue()
+    model.html = es.html.ace.session.getValue()
+    model.css = es.css.ace.session.getValue()
+    model.highlightElement = highlightSelection
+
+    var oReq = new XMLHttpRequest()
+    oReq.addEventListener('load', function () {
+      if (oReq.status === 401) {
+        setNewId()
+        return
+      } else if (oReq.status >= 400) {
+        //TODO alert that it cannot be saved
+        console.log('%ccannot save!', 'color: red')
+      } else {
+        console.log('%csaved!', 'color: red')
+      }
+    })
+    oReq.open('POST', '/save/'+id)
+    oReq.send(JSON.stringify(model))
+  }
+
+  if (id === '%ID%') {
+    setNewId(sendRequest)
   } else {
-    console.log('%cCannot save!', 'color: red');
+    sendRequest()
   }
 }
 
-function sendSaveRequest () {
-  model.js = es.js.ace.session.getValue()
-  model.html = es.html.ace.session.getValue()
-  model.css = es.css.ace.session.getValue()
-  model.highlightElement = highlightSelection
-
-  var oReq = new XMLHttpRequest()
-  oReq.addEventListener('load', function () {
-    console.log('%csaved!', 'color: red')
-  })
-  oReq.open('POST', '/save/'+id)
-  oReq.send(JSON.stringify(model))
-}
-
-function setNewId () {
+function setNewId (cb) {
   var nReq = new XMLHttpRequest()
-  nReq.onreadystatechange = function() {
-    if (this.readyState == 4) {
-      id = JSON.parse(this.responseText).newId
-      history.pushState(null, '', '/'+id);
-    }
-  }
-  nReq.open("GET", "/new")
+  nReq.addEventListener('load', function() {
+    id = JSON.parse(this.responseText).newId
+    history.pushState(null, '', '/'+id);
+    cb()
+  })
+  nReq.open('GET', '/new')
   nReq.send()
 }
 

@@ -16,5 +16,6 @@ Future main(List<String> args) async {
     throw e;
   }
   var server = await HttpServer.bind(args[0], int.parse(args[1]));
+  server.sessionTimeout = 36000;
   server.listen(await upServer.handle);
 }
