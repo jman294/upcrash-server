@@ -110,37 +110,8 @@ for (let e in es) {
 var result = document.getElementById('result')
 function resetIframe () {
   var iframe = document.getElementsByTagName('iframe')[0]
-  //iframe.src = "//netrenderer.com"
   iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
-  //var transform = result.firstElementChild.style.transform
-  //result.removeChild(result.firstElementChild)
-  //var newIframe = document.createElement('iframe');
-  //newIframe.style.transform = transform
-
-  //var html
-  //if (highlightSelection) {
-  //html = getSurroundingHtmlElement(es.html.ace.session.getValue())
-  //} else {
-  //html = es.html.ace.session.getValue()
-  //}
-
-  //var css = '*[data-upcrash] { outline: 2px solid cornflowerblue; }\n' + es.css.ace.session.getValue()
-  //var js = es.js.ace.session.getValue()
-
-  //result.insertBefore(newIframe, result.firstChild);
-
-  //newIframe.contentDocument.open();
-
-  //newIframe.contentDocument.write(html);
-  //var cssEl = newIframe.contentDocument.createElement('style')
-  //cssEl.innerHTML = css
-
-  //newIframe.contentDocument.close();
-  //newIframe.contentDocument.body.appendChild(cssEl)
-  //var jsEl = newIframe.contentDocument.createElement('script')
-  //jsEl.innerHTML = js
-  //newIframe.contentDocument.body.appendChild(jsEl)
-  //resizeIframe(dims[0].value, dims[1].value)
+  resizeIframe(dims[0].value, dims[1].value)
 }
 
 // RESIZE IFRAME
@@ -366,14 +337,14 @@ for (var i=0; i<checkBoxes.length; i++) {
 }
 
 var highlightCheck = document.getElementById('highlight')
-highlightCheck.addEventListener('change', (e) => {
-  if (e.target.checked) {
-    highlightSelection = true
-  } else {
-    highlightSelection = false
-  }
-  resetIframe()
-})
+//highlightCheck.addEventListener('change', (e) => {
+  //if (e.target.checked) {
+    //highlightSelection = true
+  //} else {
+    //highlightSelection = false
+  //}
+  //resetIframe()
+//})
 
 // SAVE
 function save (cb) {
@@ -386,7 +357,7 @@ function save (cb) {
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
       if (oReq.status === 401) {
-        setNewId()
+        setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
         //TODO alert that it cannot be saved
@@ -463,13 +434,13 @@ sendFeedback.addEventListener('click', function () {
 var newLink = document.getElementById('new')
 newLink.addEventListener('click', (e) => {
   e.preventDefault()
-  setNewId()
   for (var i in es) {
     es[i].ace.setValue('')
   }
+  setNewId(function () {})
 })
 var cloneLink = document.getElementById('clone')
 cloneLink.addEventListener('click', (e) => {
   e.preventDefault()
-  setNewId()
+  setNewId(function () {})
 })
