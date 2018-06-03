@@ -33,7 +33,9 @@ class ServerApi {
     } on FileSystemException catch (e) {
       throw e;
     }
-    _homePage = _homePageRaw.replaceAll(_toReplace, _modelJson);
+    _homePage = _homePageRaw
+        .replaceAll(_toReplace, _modelJson)
+        .replaceAll('src="https://upcrash-serve.herokuapp.com/%ID%"', '');
   }
 
   Future<Response> home() async {

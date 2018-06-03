@@ -93,18 +93,11 @@ for (let e in es) {
   es[e].ace.setTheme('ace/theme/monokai')
 
   es[e].ace.on('change', function () {
-    //if (!saved) {
-    //saved = true
-    //setNewId();
-    //}
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
-      resetIframe()
+      save(resetIframe)
     }, 500)
-    es[e].saveTimer = setTimeout(function () {
-      save()
-    }, 2000)
     var range = es.html.ace.env.editor.find('<',
       {
         preventScroll: true,
@@ -116,35 +109,38 @@ for (let e in es) {
 
 var result = document.getElementById('result')
 function resetIframe () {
-  var transform = result.firstElementChild.style.transform
-  result.removeChild(result.firstElementChild)
-  var newIframe = document.createElement('iframe');
-  newIframe.style.transform = transform
+  var iframe = document.getElementsByTagName('iframe')[0]
+  //iframe.src = "//netrenderer.com"
+  iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
+  //var transform = result.firstElementChild.style.transform
+  //result.removeChild(result.firstElementChild)
+  //var newIframe = document.createElement('iframe');
+  //newIframe.style.transform = transform
 
-  var html
-  if (highlightSelection) {
-    html = getSurroundingHtmlElement(es.html.ace.session.getValue())
-  } else {
-    html = es.html.ace.session.getValue()
-  }
+  //var html
+  //if (highlightSelection) {
+  //html = getSurroundingHtmlElement(es.html.ace.session.getValue())
+  //} else {
+  //html = es.html.ace.session.getValue()
+  //}
 
-  var css = '*[data-upcrash] { outline: 2px solid cornflowerblue; }\n' + es.css.ace.session.getValue()
-  var js = es.js.ace.session.getValue()
+  //var css = '*[data-upcrash] { outline: 2px solid cornflowerblue; }\n' + es.css.ace.session.getValue()
+  //var js = es.js.ace.session.getValue()
 
-  result.insertBefore(newIframe, result.firstChild);
+  //result.insertBefore(newIframe, result.firstChild);
 
-  newIframe.contentDocument.open();
+  //newIframe.contentDocument.open();
 
-  newIframe.contentDocument.write(html);
-  var cssEl = newIframe.contentDocument.createElement('style')
-  cssEl.innerHTML = css
+  //newIframe.contentDocument.write(html);
+  //var cssEl = newIframe.contentDocument.createElement('style')
+  //cssEl.innerHTML = css
 
-  newIframe.contentDocument.close();
-  newIframe.contentDocument.body.appendChild(cssEl)
-  var jsEl = newIframe.contentDocument.createElement('script')
-  jsEl.innerHTML = js
-  newIframe.contentDocument.body.appendChild(jsEl)
-  resizeIframe(dims[0].value, dims[1].value)
+  //newIframe.contentDocument.close();
+  //newIframe.contentDocument.body.appendChild(cssEl)
+  //var jsEl = newIframe.contentDocument.createElement('script')
+  //jsEl.innerHTML = js
+  //newIframe.contentDocument.body.appendChild(jsEl)
+  //resizeIframe(dims[0].value, dims[1].value)
 }
 
 // RESIZE IFRAME
@@ -380,7 +376,7 @@ highlightCheck.addEventListener('change', function (e) {
 })
 
 // SAVE
-function save () {
+function save (cb) {
   function sendRequest () {
     model.js = es.js.ace.session.getValue()
     model.html = es.html.ace.session.getValue()
@@ -398,6 +394,7 @@ function save () {
       } else {
         console.log('%csaved!', 'color: red')
       }
+      cb()
     })
     oReq.open('POST', '/save/'+id)
     oReq.send(JSON.stringify(model))
