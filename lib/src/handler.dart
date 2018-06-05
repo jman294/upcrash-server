@@ -1,4 +1,4 @@
-library server.server;
+library server.handler;
 
 import 'dart:io';
 import 'dart:async';
@@ -9,7 +9,7 @@ import 'package:mime_type/mime_type.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:firebase/firebase_io.dart';
 import 'package:logging/logging.dart';
-import 'package:server/src/server_api.dart';
+import 'package:server/src/api.dart';
 import 'package:server/src/server_errors.dart';
 import 'package:server/src/server_error.dart';
 import 'package:server/src/id.dart';

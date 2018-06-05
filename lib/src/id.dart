@@ -1,7 +1,6 @@
 library ads.id;
 
 import 'dart:math';
-import 'dart:convert';
 
 class Id {
   String id;

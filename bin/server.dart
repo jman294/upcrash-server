@@ -2,7 +2,7 @@ library server;
 
 import 'dart:io';
 import 'dart:async';
-import 'package:server/src/upcrash_server.dart';
+import 'package:server/src/handler.dart';
 import 'package:server/src/server_error.dart';
 
 Future main(List<String> args) async {
