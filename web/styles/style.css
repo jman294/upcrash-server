@@ -18,6 +18,8 @@ html, body {
   color: #9e9e9e;
 
   background-color: #272822;
+
+  z-index: 100;
 }
 
 #header a {
@@ -311,6 +313,10 @@ html, body {
   left: 50%;
 
   background-color: lightgrey;
+
+  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 iframe {

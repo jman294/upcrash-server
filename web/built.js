@@ -159,6 +159,20 @@ function resizeIframe (width, height) {
 
   var rheight = result.offsetHeight
   iframe.style.height = height+'px'
+  if (rwidth > rheight) {
+    if (width > rwidth) {
+      iframe.style.transform = 'scale('+rwidth/width+')'
+    } else {
+      iframe.style.transform = 'scale(1)'
+    }
+  } else {
+    if (height > rheight) {
+      console.log('we made it')
+      iframe.style.transform = 'scale('+rheight/height+')'
+    } else {
+      iframe.style.transform = 'scale(1)'
+    }
+  }
 }
 
 result.addEventListener('mouseenter', function () {
@@ -189,16 +203,7 @@ for (var i=0; i<presets.length; i++) {
   presets[i].addEventListener('click', function (e) {
     var pwidth = e.target.getAttribute('data-pwidth'), pheight = e.target.getAttribute('data-pheight')
     resizeIframe(pwidth, pheight)
-    var iframe = document.getElementsByTagName('iframe')[0]
-    if (iframe.offsetHeight > result.offsetHeight) {
-      iframe.style.transform = 'scale('+result.offsetHeight/iframe.offsetHeight+')'
-    } else if (iframe.offsetWidth > result.offsetWidth) {
-      iframe.style.transform = 'scale('+result.offsetWidth/iframe.offsetWidth+')'
-    } else {
-      iframe.style.transform = 'scale(1)'
-    }
-    dims[0].value = pwidth
-    dims[1].value = pheight
+    setResultSize(pwidth, pheight)
   })
 }
 
@@ -338,12 +343,12 @@ for (var i=0; i<checkBoxes.length; i++) {
 
 var highlightCheck = document.getElementById('highlight')
 //highlightCheck.addEventListener('change', function (e) {
-  //if (e.target.checked) {
-    //highlightSelection = true
-  //} else {
-    //highlightSelection = false
-  //}
-  //resetIframe()
+//if (e.target.checked) {
+//highlightSelection = true
+//} else {
+//highlightSelection = false
+//}
+//resetIframe()
 //})
 
 // SAVE
