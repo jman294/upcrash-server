@@ -1,6 +1,6 @@
 var highlightSelection = true
 var saved = false
-var id
+var model
 
 var es = {
   js: {
@@ -28,24 +28,14 @@ var es = {
     check: document.querySelector('#htmlcheck')
   }
 }
-if (template.html !== undefined) {
-  es.html.ace.setValue(template.html, -1)
-}
-if (template.js !== undefined) {
-  es.js.ace.setValue(template.js, -1)
-}
-if (template.css !== undefined) {
-  es.css.ace.setValue(template.css, -1)
-}
-if (template.htmlShow !== undefined) {
-}
-if (template.jsShow !== undefined) {
-}
-if (template.cssShow !== undefined) {
-}
-if (template.highlightElement !== undefined) {
-  highlightSelection = template.highlightElement;
-}
+model = new Model(template)
+es.html.ace.setValue(template.html, -1)
+es.js.ace.setValue(template.js, -1)
+es.css.ace.setValue(template.css, -1)
+//model.htmlShow
+//model.jsShow
+//model.cssShow
+highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
 es.js.ace.getSession().setTabSize(2)
@@ -103,18 +93,11 @@ for (let e in es) {
   es[e].ace.setTheme('ace/theme/monokai')
 
   es[e].ace.on('change', function () {
-    if (!saved) {
-      saved = true
-      setNewId();
-    }
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
-      resetIframe()
+      save(resetIframe)
     }, 500)
-    es[e].saveTimer = setTimeout(function () {
-      save()
-    }, 2000)
     var range = es.html.ace.env.editor.find('<',
       {
         preventScroll: true,
@@ -126,34 +109,8 @@ for (let e in es) {
 
 var result = document.getElementById('result')
 function resetIframe () {
-  var transform = result.firstElementChild.style.transform
-  result.removeChild(result.firstElementChild)
-  var newIframe = document.createElement('iframe');
-  newIframe.style.transform = transform
-
-  var html
-  if (highlightSelection) {
-    html = getSurroundingHtmlElement(es.html.ace.session.getValue())
-  } else {
-    html = es.html.ace.session.getValue()
-  }
-
-  var css = '*[data-upcrash] { outline: 2px solid cornflowerblue; }\n' + es.css.ace.session.getValue()
-  var js = es.js.ace.session.getValue()
-
-  result.insertBefore(newIframe, result.firstChild);
-
-  newIframe.contentDocument.open();
-
-  newIframe.contentDocument.write(html);
-  var cssEl = newIframe.contentDocument.createElement('style')
-  cssEl.innerHTML = css
-
-  newIframe.contentDocument.close();
-  newIframe.contentDocument.body.appendChild(cssEl)
-  var jsEl = newIframe.contentDocument.createElement('script')
-  jsEl.innerHTML = js
-  newIframe.contentDocument.body.appendChild(jsEl)
+  var iframe = document.getElementsByTagName('iframe')[0]
+  iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
   resizeIframe(dims[0].value, dims[1].value)
 }
 
@@ -380,53 +337,60 @@ for (var i=0; i<checkBoxes.length; i++) {
 }
 
 var highlightCheck = document.getElementById('highlight')
-highlightCheck.addEventListener('change', (e) => {
-  if (e.target.checked) {
-    highlightSelection = true
-  } else {
-    highlightSelection = false
-  }
-  resetIframe()
-})
+//highlightCheck.addEventListener('change', (e) => {
+  //if (e.target.checked) {
+    //highlightSelection = true
+  //} else {
+    //highlightSelection = false
+  //}
+  //resetIframe()
+//})
 
 // SAVE
-function save () {
-  if (id !== null) {
-    sendSaveRequest()
+function save (cb) {
+  function sendRequest () {
+    model.js = es.js.ace.session.getValue()
+    model.html = es.html.ace.session.getValue()
+    model.css = es.css.ace.session.getValue()
+    model.highlightElement = highlightSelection
+
+    var oReq = new XMLHttpRequest()
+    oReq.addEventListener('load', function () {
+      if (oReq.status === 401) {
+        setNewId(sendRequest)
+        return
+      } else if (oReq.status >= 400) {
+        //TODO alert that it cannot be saved
+        console.log('%ccannot save!', 'color: red')
+      } else {
+        console.log('%csaved!', 'color: red')
+      }
+      cb()
+    })
+    oReq.open('POST', '/save/'+id)
+    oReq.send(JSON.stringify(model))
+  }
+
+  if (id === '%ID%') {
+    setNewId(sendRequest)
   } else {
-    console.log('%cCannot save!', 'color: red');
+    sendRequest()
   }
 }
 
-function sendSaveRequest () {
-  template.js = es.js.ace.session.getValue()
-  template.html = es.html.ace.session.getValue()
-  template.css = es.css.ace.session.getValue()
-  template.highlightElement = highlightSelection
-
-  var oReq = new XMLHttpRequest()
-  oReq.addEventListener('load', function () {
-    console.log('%csaved!', 'color: red')
-  })
-  oReq.open('POST', '/save/'+id)
-  oReq.send(JSON.stringify(template))
-}
-
-function setNewId () {
+function setNewId (cb) {
   var nReq = new XMLHttpRequest()
-  nReq.onreadystatechange = function() {
-    if (this.readyState == 4) {
-      id = JSON.parse(this.responseText).newId
-      history.pushState(null, '', '/'+id);
-    }
-  }
-  nReq.open("GET", "/new")
+  nReq.addEventListener('load', function() {
+    id = JSON.parse(this.responseText).newId
+    history.pushState(null, '', '/'+id);
+    cb()
+  })
+  nReq.open('GET', '/new')
   nReq.send()
 }
 
 window.onload = function () {
   setResultSize()
-  resetIframe()
   highlightCheck.checked = template.highlightElement
   var iframe = document.getElementsByTagName('iframe')[0]
 }
@@ -470,13 +434,13 @@ sendFeedback.addEventListener('click', function () {
 var newLink = document.getElementById('new')
 newLink.addEventListener('click', (e) => {
   e.preventDefault()
-  setNewId()
   for (var i in es) {
     es[i].ace.setValue('')
   }
+  setNewId(function () {})
 })
 var cloneLink = document.getElementById('clone')
 cloneLink.addEventListener('click', (e) => {
   e.preventDefault()
-  setNewId()
+  setNewId(function () {})
 })

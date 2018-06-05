@@ -1,4 +1,4 @@
-library server.server;
+library server.handler;
 
 import 'dart:io';
 import 'dart:async';
@@ -9,7 +9,7 @@ import 'package:mime_type/mime_type.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:firebase/firebase_io.dart';
 import 'package:logging/logging.dart';
-import 'package:server/src/server_api.dart';
+import 'package:server/src/api.dart';
 import 'package:server/src/server_errors.dart';
 import 'package:server/src/server_error.dart';
 import 'package:server/src/id.dart';
@@ -71,16 +71,9 @@ class UpcrashServer {
         case 'save':
           if (uriParts.length == 2 && _isValidId(uriParts[1])) {
             Id id = new Id(uriParts[1]);
-            Map<dynamic, dynamic> payload;
-            try {
-              payload = JSON.decode(await UTF8.decodeStream(req));
-              resp = await _serApi.save(id, payload);
-            } on FormatException {
-              resp.statusCode = HttpStatus.BAD_REQUEST;
-              resp.reasonPhrase = ServerErrors.invalidCrash;
-              _log.warning('invalid crash attempted to be saved');
-            }
+            resp = await _serApi.save(req, id);
           } else {
+            //TODO add dedicated 404 error page that says sorry
             resp = new Response.error(HttpStatus.NOT_FOUND,
                 new ServerException(ServerErrors.invalidUri));
           }
@@ -97,6 +90,7 @@ class UpcrashServer {
               resp.add(fileBytes);
               resp.headers['Content-Type'] = mime(req.uri.toFilePath());
             } on FileSystemException {
+              //TODO add dedicated 404 error page that says sorry
               resp = new Response.error(HttpStatus.NOT_FOUND,
                   new ServerException(ServerErrors.invalidUri));
             }
@@ -106,7 +100,7 @@ class UpcrashServer {
     }
 
     if (resp.e != null) {
-      _log.warning(resp.e.cause, resp.e);
+      _log.warning(resp.e.cause + ' ' + req.requestedUri.toString(), resp.e);
     }
 
     _sendApiResponse(resp, req.response);

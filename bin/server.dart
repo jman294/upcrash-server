@@ -2,7 +2,7 @@ library server;
 
 import 'dart:io';
 import 'dart:async';
-import 'package:server/src/upcrash_server.dart';
+import 'package:server/src/handler.dart';
 import 'package:server/src/server_error.dart';
 
 Future main(List<String> args) async {
@@ -16,5 +16,6 @@ Future main(List<String> args) async {
     throw e;
   }
   var server = await HttpServer.bind(args[0], int.parse(args[1]));
+  server.sessionTimeout = 36000;
   server.listen(await upServer.handle);
 }

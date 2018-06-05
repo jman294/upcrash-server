@@ -31,7 +31,7 @@
       <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
       <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
       <span class="checkc"><input id="htmlcheck" class="check" type="checkbox" checked>HTML</span>
-      <span class="checkc"><input id="highlight" class="check" type="checkbox" checked>Highlight edited element?</span>
+      <!--<span class="checkc"><input id="highlight" class="check" type="checkbox">Highlight edited element?</span>-->
     </div>
 
     <div id="body">
@@ -55,7 +55,7 @@
         <div id="cssedit" class="edit"></div>
       </div>
       <div id="result">
-        <iframe>
+        <iframe src="https://upcrash-serve.herokuapp.com/%ID%">
           #document
           <html>
             <body>
@@ -85,6 +85,7 @@
     </div>
 
     <script>
+var id = '%ID%'
 var template = %FILLIN%
     </script>
     <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
