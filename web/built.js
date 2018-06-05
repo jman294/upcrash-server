@@ -32,9 +32,6 @@ model = new Model(template)
 es.html.ace.setValue(template.html, -1)
 es.js.ace.setValue(template.js, -1)
 es.css.ace.setValue(template.css, -1)
-//model.htmlShow
-//model.jsShow
-//model.cssShow
 highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
@@ -209,10 +206,21 @@ for (var i=0; i<presets.length; i++) {
 
 // LAYOUT
 var contentBody = document.getElementById('body')
+var numEditors = contentBody.children.length-1
+if (!template.htmlShow) {
+  hideHtmlEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!template.jsShow) {
+  hideJsEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!template.cssShow) {
+  hideCssEditor(numEditors)
+}
 var checkBoxes = document.getElementsByClassName('check')
 for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
-  el.checked = 'true'
   el.addEventListener('change', function (e) {
     var numEditors = contentBody.children.length-1
     if (e.target.checked) {
@@ -221,116 +229,25 @@ for (var i=0; i<checkBoxes.length; i++) {
       es.html.check.disabled = false
       switch (e.target.id) {
         case 'jscheck':
-          if (numEditors === 2) {
-            es.js.container.style.top = '0%'
-            es.js.container.style.bottom = '66.66%'
-            es.css.container.style.top = '33.33%';
-            es.css.container.style.bottom = '33.33%';
-            es.html.container.style.top = '66.66%';
-            es.html.container.style.bottom = '0%';
-          } else {
-            es.js.container.style.top = '0%'
-            es.js.container.style.bottom = '50%'
-            contentBody.firstElementChild.style.top = '50%'
-            contentBody.firstElementChild.style.bottom = '0%'
-          }
-          contentBody.insertBefore(es.js.container, contentBody.firstChild)
+          showJsEditor(numEditors)
           break
         case 'csscheck':
-          if (numEditors === 2) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '66.66%';
-            es.css.container.style.top = '33.33%';
-            es.css.container.style.bottom = '33.33%';
-            es.html.container.style.top = '66.66%';
-            es.html.container.style.bottom = '0%';
-          } else {
-            if (contentBody.firstElementChild.id.includes('html')) {
-              es.css.container.style.top = '0%'
-              es.css.container.style.bottom = '50%'
-              contentBody.firstElementChild.style.top = '50%'
-              contentBody.firstElementChild.style.bottom = '0%'
-            } else {
-              es.css.container.style.top = '50%'
-              es.css.container.style.bottom = '0%'
-              contentBody.firstElementChild.style.top = '0%'
-              contentBody.firstElementChild.style.bottom = '50%'
-            }
-          }
-          contentBody.insertBefore(es.css.container, contentBody.firstChild)
+          showCssEditor(numEditors)
           break
         case 'htmlcheck':
-          if (numEditors === 2) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '66.66%';
-            es.css.container.style.top = '33.33%';
-            es.css.container.style.bottom = '33.33%';
-            es.html.container.style.top = '66.66%'
-            es.html.container.style.bottom = '0%'
-          } else {
-            es.html.container.style.top = '50%'
-            es.html.container.style.bottom = '0%'
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '50%'
-          }
-          contentBody.insertBefore(es.html.container, contentBody.firstChild)
+          showHtmlEditor(numEditors)
           break
       }
     } else {
       switch (e.target.id) {
         case 'jscheck':
-          contentBody.removeChild(es.js.container)
-          if (numEditors === 3) {
-            es.css.container.style.top = '0%';
-            es.css.container.style.bottom = '50%';
-            es.html.container.style.top = '50%';
-            es.html.container.style.bottom = '0%';
-          } else if (numEditors === 2) {
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '0%'
-            if (contentBody.firstElementChild.id.includes('css')) {
-              es.css.check.disabled = true
-            } else {
-              es.html.check.disabled = true
-            }
-          } else {
-          }
+          hideJsEditor(numEditors)
           break
         case 'csscheck':
-          contentBody.removeChild(es.css.container)
-          if (numEditors === 3) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '50%';
-            es.html.container.style.top = '50%';
-            es.html.container.style.bottom = '0%';
-          } else if (numEditors === 2) {
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '0%'
-            if (contentBody.firstElementChild.id.includes('html')) {
-              es.html.check.disabled = true
-            } else {
-              es.js.check.disabled = true
-            }
-          } else {
-          }
+          hideCssEditor(numEditors)
           break
         case 'htmlcheck':
-          contentBody.removeChild(es.html.container)
-          if (numEditors === 3) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '50%';
-            es.css.container.style.top = '50%';
-            es.css.container.style.bottom = '0%';
-          } else if (numEditors === 2) {
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '0%'
-            if (contentBody.firstElementChild.id.includes('js')) {
-              es.js.check.disabled = true
-            } else {
-              es.css.check.disabled = true
-            }
-          } else {
-          }
+          hideHtmlEditor(numEditors)
           break
       }
     }
@@ -340,15 +257,128 @@ for (var i=0; i<checkBoxes.length; i++) {
   })
 }
 
+function showJsEditor (numEditors) {
+  model.jsShow = true
+  if (numEditors === 2) {
+    es.js.container.style.top = '0%'
+    es.js.container.style.bottom = '66.66%'
+    es.css.container.style.top = '33.33%';
+    es.css.container.style.bottom = '33.33%';
+    es.html.container.style.top = '66.66%';
+    es.html.container.style.bottom = '0%';
+  } else {
+    es.js.container.style.top = '0%'
+    es.js.container.style.bottom = '50%'
+    contentBody.firstElementChild.style.top = '50%'
+    contentBody.firstElementChild.style.bottom = '0%'
+  }
+  contentBody.insertBefore(es.js.container, contentBody.firstChild)
+}
+
+function showHtmlEditor (numEditors) {
+  model.htmlShow = true
+  if (numEditors === 2) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '66.66%';
+    es.css.container.style.top = '33.33%';
+    es.css.container.style.bottom = '33.33%';
+    es.html.container.style.top = '66.66%'
+    es.html.container.style.bottom = '0%'
+  } else {
+    es.html.container.style.top = '50%'
+    es.html.container.style.bottom = '0%'
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '50%'
+  }
+  contentBody.insertBefore(es.html.container, contentBody.firstChild)
+}
+
+function showCssEditor (numEditors) {
+  model.cssShow = true
+  if (numEditors === 2) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '66.66%';
+    es.css.container.style.top = '33.33%';
+    es.css.container.style.bottom = '33.33%';
+    es.html.container.style.top = '66.66%';
+    es.html.container.style.bottom = '0%';
+  } else {
+    if (contentBody.firstElementChild.id.includes('html')) {
+      es.css.container.style.top = '0%'
+      es.css.container.style.bottom = '50%'
+      contentBody.firstElementChild.style.top = '50%'
+      contentBody.firstElementChild.style.bottom = '0%'
+    } else {
+      es.css.container.style.top = '50%'
+      es.css.container.style.bottom = '0%'
+      contentBody.firstElementChild.style.top = '0%'
+      contentBody.firstElementChild.style.bottom = '50%'
+    }
+  }
+  contentBody.insertBefore(es.css.container, contentBody.firstChild)
+}
+
+function hideJsEditor (numEditors) {
+  model.jsShow = false
+  contentBody.removeChild(es.js.container)
+  if (numEditors === 3) {
+    es.css.container.style.top = '0%';
+    es.css.container.style.bottom = '50%';
+    es.html.container.style.top = '50%';
+    es.html.container.style.bottom = '0%';
+  } else if (numEditors === 2) {
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '0%'
+    if (contentBody.firstElementChild.id.includes('css')) {
+      es.css.check.disabled = true
+    } else {
+      es.html.check.disabled = true
+    }
+  }
+  es.js.check.checked = false
+}
+
+function hideHtmlEditor (numEditors) {
+  model.htmlShow = false
+  contentBody.removeChild(es.html.container)
+  if (numEditors === 3) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '50%';
+    es.css.container.style.top = '50%';
+    es.css.container.style.bottom = '0%';
+  } else if (numEditors === 2) {
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '0%'
+    if (contentBody.firstElementChild.id.includes('js')) {
+      es.js.check.disabled = true
+    } else {
+      es.css.check.disabled = true
+    }
+  }
+    es.html.check.checked = false
+  }
+
+  function hideCssEditor (numEditors) {
+    model.cssShow = false
+    contentBody.removeChild(es.css.container)
+    if (numEditors === 3) {
+      es.js.container.style.top = '0%';
+      es.js.container.style.bottom = '50%';
+      es.html.container.style.top = '50%';
+      es.html.container.style.bottom = '0%';
+    } else if (numEditors === 2) {
+      contentBody.firstElementChild.style.top = '0%'
+      contentBody.firstElementChild.style.bottom = '0%'
+      if (contentBody.firstElementChild.id.includes('html')) {
+        es.html.check.disabled = true
+      } else {
+        es.js.check.disabled = true
+      }
+    }
+    es.css.check.checked = false
+}
+
 var highlightCheck = document.getElementById('highlight')
-//highlightCheck.addEventListener('change', function (e) {
-//if (e.target.checked) {
-//highlightSelection = true
-//} else {
-//highlightSelection = false
-//}
-//resetIframe()
-//})
 
 // SAVE
 function save (cb) {
