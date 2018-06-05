@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 (unknown)"
-   sodipodi:docname="logo.svg"
+   sodipodi:docname="favicon.svg"
    inkscape:export-filename="/home/jack/Git/editor-thing/images/logo.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
@@ -159,9 +159,9 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
      inkscape:cx="-172.46528"
-     inkscape:cy="265.16119"
+     inkscape:cy="264.44691"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g4725"
      showgrid="false"
      inkscape:snap-global="false"
      inkscape:window-width="1440"
@@ -177,7 +177,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -188,43 +188,21 @@
     <g
        id="g4725"
        style="fill:#9e769e;fill-opacity:1"
-       transform="matrix(8.4181546,0,0,8.4181546,386.28324,-1296.6534)">
-      <rect
-         style="fill:#9e769e;fill-opacity:1;stroke-width:0.10032511"
-         y="173.81757"
-         x="-57.830357"
-         height="3.1749856"
-         width="1.009267"
-         id="rect3731" />
-      <rect
-         transform="rotate(90)"
-         id="rect3733"
-         width="1.009267"
-         height="3.3642232"
-         x="175.98331"
-         y="54.466137"
-         style="fill:#9e769e;fill-opacity:1;stroke-width:0.10327167" />
-      <rect
-         id="rect3735"
-         width="1.009267"
-         height="3.1749856"
-         x="-55.475399"
-         y="173.81757"
-         style="fill:#9e769e;fill-opacity:1;stroke-width:0.10032511" />
+       transform="matrix(8.4181546,0,0,8.4181546,355.28919,-1291.7397)">
       <rect
          transform="rotate(-135)"
          id="rect3739"
-         width="1.116316"
-         height="3.2559216"
-         x="-87.305336"
-         y="-162.92863"
-         style="fill:#9e769e;fill-opacity:1;stroke-width:0.10684796" />
+         width="1.9811507"
+         height="5.7783566"
+         x="-96.183037"
+         y="-165.35364"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.18962544" />
       <rect
-         style="fill:#9e769e;fill-opacity:1;stroke-width:0.10684796"
-         y="-89.444939"
-         x="-160.78903"
-         height="3.2559214"
-         width="1.116316"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.18962544"
+         y="-99.980232"
+         x="-161.55644"
+         height="5.7783561"
+         width="1.9811507"
          id="rect3741"
          transform="matrix(0.70710678,-0.70710678,-0.70710678,-0.70710678,0,0)" />
     </g>
