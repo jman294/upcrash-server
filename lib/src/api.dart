@@ -60,7 +60,7 @@ class ServerApi {
         canEdit = true;
       } else {
         return new Response.error(
-            HttpStatus.UNAUTHORIZED, new ServerException('preexisting crash'));
+            HttpStatus.FORBIDDEN, new ServerException('preexisting crash'));
       }
     } else {
       req.session['id'] = id.toString();
@@ -69,22 +69,27 @@ class ServerApi {
 
     if (canEdit) {
       Map<dynamic, dynamic> payload;
-      //TODO errors in here are a little redundant
       try {
         payload = JSON.decode(await UTF8.decodeStream(req));
-      } on FormatException {
-        return new Response.error(HttpStatus.BAD_REQUEST,
-            new ServerException(ServerErrors.invalidCrash));
-      } finally {
-        try {
-          var results = await _db.put('$_host/$id.json', payload);
-          Response res = new Response();
-          res.write(results.toString());
-          return res;
-        } on Exception {
+
+        if (Model.conformsToModel(payload)) {
+          try {
+            var results = await _db.put('$_host/$id.json', payload);
+
+            Response res = new Response();
+            res.write(results.toString());
+            return res;
+          } on Exception {
+            return new Response.error(HttpStatus.BAD_REQUEST,
+                new ServerException(ServerErrors.invalidCrash));
+          }
+        } else {
           return new Response.error(HttpStatus.BAD_REQUEST,
               new ServerException(ServerErrors.invalidCrash));
         }
+      } on FormatException {
+        return new Response.error(HttpStatus.BAD_REQUEST,
+            new ServerException(ServerErrors.invalidCrash));
       }
     }
   }
