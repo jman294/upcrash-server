@@ -352,3 +352,9 @@ iframe {
     display: none;
   }
 }
+
+@media screen and (max-height: 500px) {
+  iframe {
+    margin-top: 0;
+  }
+}

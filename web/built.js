@@ -167,7 +167,6 @@ function resizeIframe (width, height) {
     }
   } else {
     if (height > rheight) {
-      console.log('we made it')
       iframe.style.transform = 'scale('+rheight/height+')'
     } else {
       iframe.style.transform = 'scale(1)'
