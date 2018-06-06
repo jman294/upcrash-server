@@ -28,7 +28,7 @@ var es = {
     check: document.querySelector('#htmlcheck')
   }
 }
-model = new Model(template)
+model = new Model(template, onModelChange)
 es.html.ace.setValue(template.html, -1)
 es.js.ace.setValue(template.js, -1)
 es.css.ace.setValue(template.css, -1)
@@ -93,8 +93,8 @@ for (let e in es) {
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
-      save(resetIframe)
-    }, 500)
+      updateModel()
+    }, 1000)
     var range = es.html.ace.env.editor.find('<',
       {
         preventScroll: true,
@@ -207,15 +207,15 @@ for (var i=0; i<presets.length; i++) {
 // LAYOUT
 var contentBody = document.getElementById('body')
 var numEditors = contentBody.children.length-1
-if (!template.htmlShow) {
+if (!model.htmlShow) {
   hideHtmlEditor(numEditors)
 }
 numEditors = contentBody.children.length-1
-if (!template.jsShow) {
+if (!model.jsShow) {
   hideJsEditor(numEditors)
 }
 numEditors = contentBody.children.length-1
-if (!template.cssShow) {
+if (!model.cssShow) {
   hideCssEditor(numEditors)
 }
 var checkBoxes = document.getElementsByClassName('check')
@@ -258,7 +258,7 @@ for (var i=0; i<checkBoxes.length; i++) {
 }
 
 function showJsEditor (numEditors) {
-  model.jsShow = true
+  model.setProp('jsShow', true)
   if (numEditors === 2) {
     es.js.container.style.top = '0%'
     es.js.container.style.bottom = '66.66%'
@@ -276,7 +276,7 @@ function showJsEditor (numEditors) {
 }
 
 function showHtmlEditor (numEditors) {
-  model.htmlShow = true
+  model.setProp('htmlShow', true)
   if (numEditors === 2) {
     es.js.container.style.top = '0%';
     es.js.container.style.bottom = '66.66%';
@@ -294,7 +294,7 @@ function showHtmlEditor (numEditors) {
 }
 
 function showCssEditor (numEditors) {
-  model.cssShow = true
+  model.setProp('cssShow', true)
   if (numEditors === 2) {
     es.js.container.style.top = '0%';
     es.js.container.style.bottom = '66.66%';
@@ -319,7 +319,7 @@ function showCssEditor (numEditors) {
 }
 
 function hideJsEditor (numEditors) {
-  model.jsShow = false
+  model.setProp('jsShow', false)
   contentBody.removeChild(es.js.container)
   if (numEditors === 3) {
     es.css.container.style.top = '0%';
@@ -339,7 +339,7 @@ function hideJsEditor (numEditors) {
 }
 
 function hideHtmlEditor (numEditors) {
-  model.htmlShow = false
+  model.setProp('htmlShow', false)
   contentBody.removeChild(es.html.container)
   if (numEditors === 3) {
     es.js.container.style.top = '0%';
@@ -355,42 +355,50 @@ function hideHtmlEditor (numEditors) {
       es.css.check.disabled = true
     }
   }
-    es.html.check.checked = false
-  }
+  es.html.check.checked = false
+}
 
-  function hideCssEditor (numEditors) {
-    model.cssShow = false
-    contentBody.removeChild(es.css.container)
-    if (numEditors === 3) {
-      es.js.container.style.top = '0%';
-      es.js.container.style.bottom = '50%';
-      es.html.container.style.top = '50%';
-      es.html.container.style.bottom = '0%';
-    } else if (numEditors === 2) {
-      contentBody.firstElementChild.style.top = '0%'
-      contentBody.firstElementChild.style.bottom = '0%'
-      if (contentBody.firstElementChild.id.includes('html')) {
-        es.html.check.disabled = true
-      } else {
-        es.js.check.disabled = true
-      }
+function hideCssEditor (numEditors) {
+  model.setProp('cssShow', false)
+  contentBody.removeChild(es.css.container)
+  if (numEditors === 3) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '50%';
+    es.html.container.style.top = '50%';
+    es.html.container.style.bottom = '0%';
+  } else if (numEditors === 2) {
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '0%'
+    if (contentBody.firstElementChild.id.includes('html')) {
+      es.html.check.disabled = true
+    } else {
+      es.js.check.disabled = true
     }
-    es.css.check.checked = false
+  }
+  es.css.check.checked = false
 }
 
 var highlightCheck = document.getElementById('highlight')
 
 // SAVE
+function updateModel () {
+  model.setProp('js', es.js.ace.session.getValue())
+  model.setProp('html', es.html.ace.session.getValue())
+  model.setProp('css', es.css.ace.session.getValue())
+  model.setProp('highlightElement', highlightSelection)
+}
+function onModelChange (what) {
+  if (what === 'js' || what === 'html' || what === 'css') {
+    save(resetIframe)
+  } else {
+    save(null)
+  }
+}
 function save (cb) {
   function sendRequest () {
-    model.js = es.js.ace.session.getValue()
-    model.html = es.html.ace.session.getValue()
-    model.css = es.css.ace.session.getValue()
-    model.highlightElement = highlightSelection
-
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
-      if (oReq.status === 401) {
+      if (oReq.status === 403) {
         setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
@@ -399,7 +407,7 @@ function save (cb) {
       } else {
         console.log('%csaved!', 'color: red')
       }
-      cb()
+      !!cb && cb()
     })
     oReq.open('POST', '/save/'+id)
     oReq.send(JSON.stringify(model))
