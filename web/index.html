@@ -47,11 +47,20 @@
           <i id="jsexit" class="exit"></i>
 
           <label for="loadtype">Script Load Type</label>
-          <select name="loadtype">
-            <option value="on load">On Load</option>
-            <option value="on DOM ready">On DOM Ready</option>
-            <option value="bottom of head">Bottom of head</option>
-            <option value="bottom of body">Bottom of body</option>
+          <select id="loadtype" name="loadtype">
+            <option value="on load" data-loadtype="0">On Load</option>
+            <option value="on DOM ready" data-loadtype="1">On DOM Ready</option>
+            <option value="bottom of head" data-loadtype="2">Bottom of head</option>
+            <option value="bottom of body" data-loadtype="3">Bottom of body</option>
+          </select>
+
+          <label for="jslang">Language</label>
+          <select id="jslang" name="jslang">
+            <option value="browser" data-jslang="0">This Browser's JS</option>
+            <option value="es6" data-jslang="1">ES6 with Babel</option>
+            <option value="coffeescript" data-jslang="2">CoffeeScript</option>
+            <option value="typescript" data-jslang="3">TypeScript</option>
+            <option value="jsx" data-jslang="4">JSX+Babel</option>
           </select>
         </div>
         <div class="conhead">
@@ -62,6 +71,14 @@
       <div id="htmlcon" class="con">
         <div id="htmlset" class="set">
           <i id="htmlexit" class="exit"></i>
+
+          <label for="htmllang">Preprocessor</label>
+          <select id="htmllang" name="csslang">
+            <option value="html" data-htmllang="0">Plain HTML</option>
+            <option value="jsx" data-htmllang="1">Pug</option>
+            <option value="haml" data-htmllang="2">Haml</option>
+            <option value="md" data-htmllang="3">Markdown</option>
+          </select>
         </div>
         <div class="conhead">
           HTML
@@ -71,6 +88,14 @@
       <div id="csscon" class="con">
         <div id="cssset" class="set">
           <i id="cssexit" class="exit"></i>
+
+          <label for="csslang">Preprocessor</label>
+          <select id="csslang" name="csslang">
+            <option value="css" data-csslang="0">CSS</option>
+            <option value="scss" data-csslang="1">SCSS</option>
+            <option value="sass" data-csslang="2">SASS</option>
+            <option value="stylus" data-csslang="3">Stylus</option>
+          </select>
         </div>
         <div class="conhead">
           CSS

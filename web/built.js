@@ -31,9 +31,9 @@ var es = {
   }
 }
 model = new Model(template, onModelChange)
-es.html.ace.setValue(template.html, -1)
-es.js.ace.setValue(template.js, -1)
-es.css.ace.setValue(template.css, -1)
+es.html.ace.setValue(model.html, -1)
+es.js.ace.setValue(model.js, -1)
+es.css.ace.setValue(model.css, -1)
 highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
@@ -402,6 +402,7 @@ function save (cb) {
     NProgress.start()
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
+      NProgress.done()
       if (oReq.status === 403) {
         setNewId(sendRequest)
         return
@@ -410,7 +411,6 @@ function save (cb) {
         console.log('%ccannot save!', 'color: red')
       } else {
         console.log('%csaved!', 'color: red')
-        NProgress.done()
       }
       !!cb && cb()
     })
@@ -505,6 +505,33 @@ for (var conhead = 0; conhead < conheads.length; conhead++) {
     e.target.parentElement.firstElementChild.style.display = 'block'
   })
 }
+
+//// JS Settings
+var loadType = document.getElementById('loadtype')
+loadType.selectedIndex = model.loadType
+loadType.addEventListener('change', function (e) {
+  model.setProp('loadType', e.target.selectedIndex)
+})
+
+var jsLang = document.getElementById('jslang')
+jsLang.selectedIndex = model.jsLang
+jsLang.addEventListener('change', function (e) {
+  model.setProp('jsLang', e.target.selectedIndex)
+})
+
+//// HTML Settings
+var htmlLang = document.getElementById('htmllang')
+htmlLang.selectedIndex = model.htmlLang
+htmlLang.addEventListener('change', function (e) {
+  model.setProp('htmlLang', e.target.selectedIndex)
+})
+
+//// CSS Settings
+var cssLang = document.getElementById('csslang')
+cssLang.selectedIndex = model.cssLang
+cssLang.addEventListener('change', function (e) {
+  model.setProp('cssLang', e.target.selectedIndex)
+})
 function Model (obj, onChange) {
   this.js = ""
   this.html = ""
@@ -514,6 +541,10 @@ function Model (obj, onChange) {
   this.htmlShow = true
   this.cssShow = true
 
+  this.loadType = 3
+  this.jsLang = 0
+  this.htmlLang = 0
+  this.cssLang = 0
   this.highlightElement = false
 
   this.changed = onChange

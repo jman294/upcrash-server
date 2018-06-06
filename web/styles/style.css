@@ -218,6 +218,8 @@ html, body {
 }
 
 label {
+  display: block;
+
   margin-right: 5px;
 
   color: #9e9e9e;

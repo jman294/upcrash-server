@@ -7,6 +7,10 @@ function Model (obj, onChange) {
   this.htmlShow = true
   this.cssShow = true
 
+  this.loadType = 3
+  this.jsLang = 0
+  this.htmlLang = 0
+  this.cssLang = 0
   this.highlightElement = false
 
   this.changed = onChange
