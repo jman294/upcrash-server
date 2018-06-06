@@ -5,6 +5,21 @@ html, body {
   overflow: hidden;
 }
 
+#bar {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 0%;
+  height: 2px;
+  background-color: #9d769e;
+
+  opacity: 1;
+
+  transition: all 1s ease-in-out;
+}
+
 #header {
   height: 20px;
 
@@ -18,6 +33,8 @@ html, body {
   color: #9e9e9e;
 
   background-color: #272822;
+
+  z-index: 100;
 }
 
 #header a {
@@ -311,6 +328,10 @@ html, body {
   left: 50%;
 
   background-color: lightgrey;
+
+  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 iframe {
@@ -344,5 +365,11 @@ iframe {
 
   .con, .edit, .checkc, #new, #clone {
     display: none;
+  }
+}
+
+@media screen and (max-height: 500px) {
+  iframe {
+    margin-top: 0;
   }
 }

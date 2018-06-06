@@ -28,13 +28,10 @@ var es = {
     check: document.querySelector('#htmlcheck')
   }
 }
-model = new Model(template)
+model = new Model(template, onModelChange)
 es.html.ace.setValue(template.html, -1)
 es.js.ace.setValue(template.js, -1)
 es.css.ace.setValue(template.css, -1)
-//model.htmlShow
-//model.jsShow
-//model.cssShow
 highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
@@ -96,8 +93,8 @@ for (let e in es) {
     clearTimeout(es[e].typeTimer)
     clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
-      save(resetIframe)
-    }, 500)
+      updateModel()
+    }, 1000)
     var range = es.html.ace.env.editor.find('<',
       {
         preventScroll: true,
@@ -159,6 +156,19 @@ function resizeIframe (width, height) {
 
   var rheight = result.offsetHeight
   iframe.style.height = height+'px'
+  if (rwidth > rheight) {
+    if (width > rwidth) {
+      iframe.style.transform = 'scale('+rwidth/width+')'
+    } else {
+      iframe.style.transform = 'scale(1)'
+    }
+  } else {
+    if (height > rheight) {
+      iframe.style.transform = 'scale('+rheight/height+')'
+    } else {
+      iframe.style.transform = 'scale(1)'
+    }
+  }
 }
 
 result.addEventListener('mouseenter', function () {
@@ -189,26 +199,28 @@ for (var i=0; i<presets.length; i++) {
   presets[i].addEventListener('click', (e) => {
     var pwidth = e.target.getAttribute('data-pwidth'), pheight = e.target.getAttribute('data-pheight')
     resizeIframe(pwidth, pheight)
-    var iframe = document.getElementsByTagName('iframe')[0]
-    if (iframe.offsetHeight > result.offsetHeight) {
-      iframe.style.transform = 'scale('+result.offsetHeight/iframe.offsetHeight+')'
-    } else if (iframe.offsetWidth > result.offsetWidth) {
-      iframe.style.transform = 'scale('+result.offsetWidth/iframe.offsetWidth+')'
-    } else {
-      iframe.style.transform = 'scale(1)'
-    }
-    dims[0].value = pwidth
-    dims[1].value = pheight
+    setResultSize(pwidth, pheight)
   })
 }
 
 
 // LAYOUT
 var contentBody = document.getElementById('body')
+var numEditors = contentBody.children.length-1
+if (!model.htmlShow) {
+  hideHtmlEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.jsShow) {
+  hideJsEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.cssShow) {
+  hideCssEditor(numEditors)
+}
 var checkBoxes = document.getElementsByClassName('check')
 for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
-  el.checked = 'true'
   el.addEventListener('change', (e) => {
     var numEditors = contentBody.children.length-1
     if (e.target.checked) {
@@ -217,116 +229,25 @@ for (var i=0; i<checkBoxes.length; i++) {
       es.html.check.disabled = false
       switch (e.target.id) {
         case 'jscheck':
-          if (numEditors === 2) {
-            es.js.container.style.top = '0%'
-            es.js.container.style.bottom = '66.66%'
-            es.css.container.style.top = '33.33%';
-            es.css.container.style.bottom = '33.33%';
-            es.html.container.style.top = '66.66%';
-            es.html.container.style.bottom = '0%';
-          } else {
-            es.js.container.style.top = '0%'
-            es.js.container.style.bottom = '50%'
-            contentBody.firstElementChild.style.top = '50%'
-            contentBody.firstElementChild.style.bottom = '0%'
-          }
-          contentBody.insertBefore(es.js.container, contentBody.firstChild)
+          showJsEditor(numEditors)
           break
         case 'csscheck':
-          if (numEditors === 2) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '66.66%';
-            es.css.container.style.top = '33.33%';
-            es.css.container.style.bottom = '33.33%';
-            es.html.container.style.top = '66.66%';
-            es.html.container.style.bottom = '0%';
-          } else {
-            if (contentBody.firstElementChild.id.includes('html')) {
-              es.css.container.style.top = '0%'
-              es.css.container.style.bottom = '50%'
-              contentBody.firstElementChild.style.top = '50%'
-              contentBody.firstElementChild.style.bottom = '0%'
-            } else {
-              es.css.container.style.top = '50%'
-              es.css.container.style.bottom = '0%'
-              contentBody.firstElementChild.style.top = '0%'
-              contentBody.firstElementChild.style.bottom = '50%'
-            }
-          }
-          contentBody.insertBefore(es.css.container, contentBody.firstChild)
+          showCssEditor(numEditors)
           break
         case 'htmlcheck':
-          if (numEditors === 2) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '66.66%';
-            es.css.container.style.top = '33.33%';
-            es.css.container.style.bottom = '33.33%';
-            es.html.container.style.top = '66.66%'
-            es.html.container.style.bottom = '0%'
-          } else {
-            es.html.container.style.top = '50%'
-            es.html.container.style.bottom = '0%'
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '50%'
-          }
-          contentBody.insertBefore(es.html.container, contentBody.firstChild)
+          showHtmlEditor(numEditors)
           break
       }
     } else {
       switch (e.target.id) {
         case 'jscheck':
-          contentBody.removeChild(es.js.container)
-          if (numEditors === 3) {
-            es.css.container.style.top = '0%';
-            es.css.container.style.bottom = '50%';
-            es.html.container.style.top = '50%';
-            es.html.container.style.bottom = '0%';
-          } else if (numEditors === 2) {
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '0%'
-            if (contentBody.firstElementChild.id.includes('css')) {
-              es.css.check.disabled = true
-            } else {
-              es.html.check.disabled = true
-            }
-          } else {
-          }
+          hideJsEditor(numEditors)
           break
         case 'csscheck':
-          contentBody.removeChild(es.css.container)
-          if (numEditors === 3) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '50%';
-            es.html.container.style.top = '50%';
-            es.html.container.style.bottom = '0%';
-          } else if (numEditors === 2) {
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '0%'
-            if (contentBody.firstElementChild.id.includes('html')) {
-              es.html.check.disabled = true
-            } else {
-              es.js.check.disabled = true
-            }
-          } else {
-          }
+          hideCssEditor(numEditors)
           break
         case 'htmlcheck':
-          contentBody.removeChild(es.html.container)
-          if (numEditors === 3) {
-            es.js.container.style.top = '0%';
-            es.js.container.style.bottom = '50%';
-            es.css.container.style.top = '50%';
-            es.css.container.style.bottom = '0%';
-          } else if (numEditors === 2) {
-            contentBody.firstElementChild.style.top = '0%'
-            contentBody.firstElementChild.style.bottom = '0%'
-            if (contentBody.firstElementChild.id.includes('js')) {
-              es.js.check.disabled = true
-            } else {
-              es.css.check.disabled = true
-            }
-          } else {
-          }
+          hideHtmlEditor(numEditors)
           break
       }
     }
@@ -336,27 +257,149 @@ for (var i=0; i<checkBoxes.length; i++) {
   })
 }
 
+function showJsEditor (numEditors) {
+  model.setProp('jsShow', true)
+  if (numEditors === 2) {
+    es.js.container.style.top = '0%'
+    es.js.container.style.bottom = '66.66%'
+    es.css.container.style.top = '33.33%';
+    es.css.container.style.bottom = '33.33%';
+    es.html.container.style.top = '66.66%';
+    es.html.container.style.bottom = '0%';
+  } else {
+    es.js.container.style.top = '0%'
+    es.js.container.style.bottom = '50%'
+    contentBody.firstElementChild.style.top = '50%'
+    contentBody.firstElementChild.style.bottom = '0%'
+  }
+  contentBody.insertBefore(es.js.container, contentBody.firstChild)
+}
+
+function showHtmlEditor (numEditors) {
+  model.setProp('htmlShow', true)
+  if (numEditors === 2) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '66.66%';
+    es.css.container.style.top = '33.33%';
+    es.css.container.style.bottom = '33.33%';
+    es.html.container.style.top = '66.66%'
+    es.html.container.style.bottom = '0%'
+  } else {
+    es.html.container.style.top = '50%'
+    es.html.container.style.bottom = '0%'
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '50%'
+  }
+  contentBody.insertBefore(es.html.container, contentBody.firstChild)
+}
+
+function showCssEditor (numEditors) {
+  model.setProp('cssShow', true)
+  if (numEditors === 2) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '66.66%';
+    es.css.container.style.top = '33.33%';
+    es.css.container.style.bottom = '33.33%';
+    es.html.container.style.top = '66.66%';
+    es.html.container.style.bottom = '0%';
+  } else {
+    if (contentBody.firstElementChild.id.includes('html')) {
+      es.css.container.style.top = '0%'
+      es.css.container.style.bottom = '50%'
+      contentBody.firstElementChild.style.top = '50%'
+      contentBody.firstElementChild.style.bottom = '0%'
+    } else {
+      es.css.container.style.top = '50%'
+      es.css.container.style.bottom = '0%'
+      contentBody.firstElementChild.style.top = '0%'
+      contentBody.firstElementChild.style.bottom = '50%'
+    }
+  }
+  contentBody.insertBefore(es.css.container, contentBody.firstChild)
+}
+
+function hideJsEditor (numEditors) {
+  model.setProp('jsShow', false)
+  contentBody.removeChild(es.js.container)
+  if (numEditors === 3) {
+    es.css.container.style.top = '0%';
+    es.css.container.style.bottom = '50%';
+    es.html.container.style.top = '50%';
+    es.html.container.style.bottom = '0%';
+  } else if (numEditors === 2) {
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '0%'
+    if (contentBody.firstElementChild.id.includes('css')) {
+      es.css.check.disabled = true
+    } else {
+      es.html.check.disabled = true
+    }
+  }
+  es.js.check.checked = false
+}
+
+function hideHtmlEditor (numEditors) {
+  model.setProp('htmlShow', false)
+  contentBody.removeChild(es.html.container)
+  if (numEditors === 3) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '50%';
+    es.css.container.style.top = '50%';
+    es.css.container.style.bottom = '0%';
+  } else if (numEditors === 2) {
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '0%'
+    if (contentBody.firstElementChild.id.includes('js')) {
+      es.js.check.disabled = true
+    } else {
+      es.css.check.disabled = true
+    }
+  }
+  es.html.check.checked = false
+}
+
+function hideCssEditor (numEditors) {
+  model.setProp('cssShow', false)
+  contentBody.removeChild(es.css.container)
+  if (numEditors === 3) {
+    es.js.container.style.top = '0%';
+    es.js.container.style.bottom = '50%';
+    es.html.container.style.top = '50%';
+    es.html.container.style.bottom = '0%';
+  } else if (numEditors === 2) {
+    contentBody.firstElementChild.style.top = '0%'
+    contentBody.firstElementChild.style.bottom = '0%'
+    if (contentBody.firstElementChild.id.includes('html')) {
+      es.html.check.disabled = true
+    } else {
+      es.js.check.disabled = true
+    }
+  }
+  es.css.check.checked = false
+}
+
 var highlightCheck = document.getElementById('highlight')
-//highlightCheck.addEventListener('change', (e) => {
-  //if (e.target.checked) {
-    //highlightSelection = true
-  //} else {
-    //highlightSelection = false
-  //}
-  //resetIframe()
-//})
 
 // SAVE
+var bar = document.getElementById('bar')
+function updateModel () {
+  model.setProp('js', es.js.ace.session.getValue())
+  model.setProp('html', es.html.ace.session.getValue())
+  model.setProp('css', es.css.ace.session.getValue())
+  model.setProp('highlightElement', highlightSelection)
+}
+function onModelChange (what) {
+  if (what === 'js' || what === 'html' || what === 'css') {
+    save(resetIframe)
+  } else {
+    save(null)
+  }
+}
 function save (cb) {
   function sendRequest () {
-    model.js = es.js.ace.session.getValue()
-    model.html = es.html.ace.session.getValue()
-    model.css = es.css.ace.session.getValue()
-    model.highlightElement = highlightSelection
-
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
-      if (oReq.status === 401) {
+      if (oReq.status === 403) {
         setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
@@ -364,8 +407,18 @@ function save (cb) {
         console.log('%ccannot save!', 'color: red')
       } else {
         console.log('%csaved!', 'color: red')
+        bar.style.width = '100%'
+        setTimeout(function () {
+          bar.style.opacity = '0'
+        }, 1100)
+        setTimeout(function () {
+          bar.style.width = '0%';
+        }, 2100)
+        setTimeout(function () {
+          bar.style.opacity = '1'
+        }, 3100)
       }
-      cb()
+      !!cb && cb()
     })
     oReq.open('POST', '/save/'+id)
     oReq.send(JSON.stringify(model))
