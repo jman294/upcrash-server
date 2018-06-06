@@ -39,24 +39,39 @@
       <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
       <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
       <span class="checkc"><input id="htmlcheck" class="check" type="checkbox" checked>HTML</span>
-      <!--<span class="checkc"><input id="highlight" class="check" type="checkbox">Highlight edited element?</span>-->
     </div>
 
     <div id="body">
       <div id="jscon" class="con">
+        <div id="jsset" class="set">
+          <i id="jsexit" class="exit"></i>
+
+          <label for="loadtype">Script Load Type</label>
+          <select name="loadtype">
+            <option value="on load">On Load</option>
+            <option value="on DOM ready">On DOM Ready</option>
+            <option value="bottom of head">Bottom of head</option>
+            <option value="bottom of body">Bottom of body</option>
+          </select>
+        </div>
         <div class="conhead">
           JAVASCRIPT
         </div>
         <div id="jsedit" class="edit"></div>
       </div>
       <div id="htmlcon" class="con">
+        <div id="htmlset" class="set">
+          <i id="htmlexit" class="exit"></i>
+        </div>
         <div class="conhead">
           HTML
         </div>
         <div id="htmledit" class="edit"></div>
-        <!--<div class="dropzone"></div>-->
       </div>
       <div id="csscon" class="con">
+        <div id="cssset" class="set">
+          <i id="cssexit" class="exit"></i>
+        </div>
         <div class="conhead">
           CSS
         </div>

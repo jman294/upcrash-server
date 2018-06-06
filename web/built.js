@@ -444,8 +444,6 @@ function setNewId (cb) {
 
 window.onload = function () {
   setResultSize()
-  highlightCheck.checked = template.highlightElement
-  var iframe = document.getElementsByTagName('iframe')[0]
 }
 
 // HEADER BUTTONS
@@ -497,6 +495,22 @@ cloneLink.addEventListener('click', function (e) {
   e.preventDefault()
   setNewId(function () {})
 })
+
+// SETTINGS
+var settings = document.getElementsByClassName('set')
+var exits = document.getElementsByClassName('exit')
+var conheads = document.getElementsByClassName('conhead')
+
+for (var exit = 0; exit < exits.length; exit++) {
+  exits[exit].addEventListener('click', function (e) {
+    e.target.parentElement.style.display = 'none'
+  })
+}
+for (var conhead = 0; conhead < conheads.length; conhead++) {
+  conheads[conhead].addEventListener('click', function (e) {
+    e.target.parentElement.firstElementChild.style.display = 'block'
+  })
+}
 function Model (obj, onChange) {
   this.js = ""
   this.html = ""
