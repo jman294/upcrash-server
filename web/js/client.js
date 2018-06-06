@@ -381,6 +381,7 @@ function hideCssEditor (numEditors) {
 var highlightCheck = document.getElementById('highlight')
 
 // SAVE
+var bar = document.getElementById('bar')
 function updateModel () {
   model.setProp('js', es.js.ace.session.getValue())
   model.setProp('html', es.html.ace.session.getValue())
@@ -406,6 +407,16 @@ function save (cb) {
         console.log('%ccannot save!', 'color: red')
       } else {
         console.log('%csaved!', 'color: red')
+        bar.style.width = '100%'
+        setTimeout(function () {
+          bar.style.opacity = '0'
+        }, 1100)
+        setTimeout(function () {
+          bar.style.width = '0%';
+        }, 2100)
+        setTimeout(function () {
+          bar.style.opacity = '1'
+        }, 3100)
       }
       !!cb && cb()
     })
