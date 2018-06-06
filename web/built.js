@@ -2,6 +2,8 @@ var highlightSelection = true
 var saved = false
 var model
 
+NProgress.configure({ showSpinner: false })
+
 var es = {
   js: {
     ace: ace.edit('jsedit'),
@@ -397,6 +399,7 @@ function onModelChange (what) {
 }
 function save (cb) {
   function sendRequest () {
+    NProgress.start()
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
       if (oReq.status === 403) {
@@ -407,16 +410,7 @@ function save (cb) {
         console.log('%ccannot save!', 'color: red')
       } else {
         console.log('%csaved!', 'color: red')
-        bar.style.width = '100%'
-        setTimeout(function () {
-          bar.style.opacity = '0'
-        }, 1100)
-        setTimeout(function () {
-          bar.style.width = '0%';
-        }, 2100)
-        setTimeout(function () {
-          bar.style.opacity = '1'
-        }, 3100)
+        NProgress.done()
       }
       !!cb && cb()
     })
