@@ -380,7 +380,6 @@ function hideCssEditor (numEditors) {
   es.css.check.checked = false
 }
 
-var highlightCheck = document.getElementById('highlight')
 
 // SAVE
 var bar = document.getElementById('bar')
@@ -388,7 +387,6 @@ function updateModel () {
   model.setProp('js', es.js.ace.session.getValue())
   model.setProp('html', es.html.ace.session.getValue())
   model.setProp('css', es.css.ace.session.getValue())
-  model.setProp('highlightElement', highlightSelection)
 }
 function onModelChange (what) {
   if (what === 'js' || what === 'html' || what === 'css') {
@@ -524,6 +522,13 @@ var htmlLang = document.getElementById('htmllang')
 htmlLang.selectedIndex = model.htmlLang
 htmlLang.addEventListener('change', function (e) {
   model.setProp('htmlLang', e.target.selectedIndex)
+})
+
+var highlightCheck = document.getElementById('highlightel')
+highlightCheck.checked = model.highlightElement
+highlightCheck.addEventListener('change', function (e) {
+  highlightElement = e.target.checked
+  model.setProp('highlightElement', e.target.checked)
 })
 
 //// CSS Settings
