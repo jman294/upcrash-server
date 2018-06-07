@@ -151,14 +151,15 @@ for (var t = 0; t<dims.length; t++) {
   })
 }
 function resizeIframe (width, height) {
+  width = parseInt(width)
+  height = parseInt(height)
   var iframe = document.getElementsByTagName('iframe')[0]
 
   var rwidth = result.offsetWidth
-  iframe.style.width = width+'px'
-
   var rheight = result.offsetHeight
   iframe.style.height = height+'px'
-  if (rwidth > rheight) {
+  iframe.style.width = width+'px'
+  if (width > height) {
     if (width > rwidth) {
       iframe.style.transform = 'scale('+rwidth/width+')'
     } else {
@@ -204,7 +205,6 @@ for (var i=0; i<presets.length; i++) {
     setResultSize(pwidth, pheight)
   })
 }
-
 
 // LAYOUT
 var contentBody = document.getElementById('body')
