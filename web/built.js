@@ -57,7 +57,7 @@ function getSurroundingHtmlElement (text) {
   cursorPosition += cursor.column
   for (var j=0; j<text.length-1; j++) {
     if (j === cursorPosition) {
-      break
+        break
     }
     var c = text.charAt(j)
     if (c === '<' && text.charAt(j+1) === '/') {
@@ -86,10 +86,11 @@ es.html.ace.env.editor.selection.on('changeCursor', function () {
   }
 })
 
-for (let e in es) {
+for (var e in es) {
   es[e].ace.setShowPrintMargin(false)
   es[e].ace.getSession().setUseWrapMode(true)
   es[e].ace.setTheme('ace/theme/monokai')
+  es[e].ace.getSession().setUseWorker(model.lintCheck)
 
   es[e].ace.on('change', function () {
     clearTimeout(es[e].typeTimer)
@@ -376,13 +377,16 @@ function updateModel () {
   model.setProp('html', es.html.ace.session.getValue())
   model.setProp('css', es.css.ace.session.getValue())
 }
+
 function onModelChange (what) {
+  saveNotifier.innerHTML = 'Unsaved!'
   if (what === 'js' || what === 'html' || what === 'css') {
     save(resetIframe)
   } else {
     save(null)
   }
 }
+
 function save (cb) {
   function sendRequest () {
     NProgress.start()
@@ -518,15 +522,19 @@ loadType.addEventListener('change', function (e) {
 
 var jsLang = document.getElementById('jslang')
 jsLang.selectedIndex = model.jsLang
+conheads[0].innerHTML = jsLang.options[model.jsLang].value
 jsLang.addEventListener('change', function (e) {
   model.setProp('jsLang', e.target.selectedIndex)
+  conheads[0].innerHTML = e.target.value
 })
 
 //// HTML Settings
 var htmlLang = document.getElementById('htmllang')
 htmlLang.selectedIndex = model.htmlLang
+conheads[1].innerHTML = htmlLang.options[model.htmlLang].value
 htmlLang.addEventListener('change', function (e) {
   model.setProp('htmlLang', e.target.selectedIndex)
+  conheads[1].innerHTML = e.target.value
 })
 
 var highlightCheck = document.getElementById('highlightel')
@@ -539,8 +547,21 @@ highlightCheck.addEventListener('change', function (e) {
 //// CSS Settings
 var cssLang = document.getElementById('csslang')
 cssLang.selectedIndex = model.cssLang
+conheads[2].innerHTML = cssLang.options[model.cssLang].value
 cssLang.addEventListener('change', function (e) {
   model.setProp('cssLang', e.target.selectedIndex)
+  conheads[2].innerHTML = e.target.value
+})
+
+//// Editor settings
+var lintCheck = document.getElementById('lintcheck')
+lintCheck.checked = model.lintCheck
+lintCheck.addEventListener('change', function (e) {
+  model.setProp('lintCheck', e.target.checked)
+  for (var ed in es) {
+    console.log(es[ed])
+    es[ed].ace.getSession().setUseWorker(e.target.checked)
+  }
 })
 
 // INITIALIZATION
@@ -569,8 +590,10 @@ function Model (obj, onChange) {
   this.loadType = 3
   this.jsLang = 0
   this.htmlLang = 0
-  this.cssLang = 0
   this.highlightElement = false
+  this.cssLang = 0
+
+  this.lintCheck = true
 
   this.changed = onChange
 
