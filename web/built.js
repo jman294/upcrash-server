@@ -208,18 +208,6 @@ for (var i=0; i<presets.length; i++) {
 
 // LAYOUT
 var contentBody = document.getElementById('body')
-var numEditors = contentBody.children.length-1
-if (!model.htmlShow) {
-  hideHtmlEditor(numEditors)
-}
-numEditors = contentBody.children.length-1
-if (!model.jsShow) {
-  hideJsEditor(numEditors)
-}
-numEditors = contentBody.children.length-1
-if (!model.cssShow) {
-  hideCssEditor(numEditors)
-}
 var checkBoxes = document.getElementsByClassName('check')
 for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
@@ -537,6 +525,21 @@ cssLang.selectedIndex = model.cssLang
 cssLang.addEventListener('change', function (e) {
   model.setProp('cssLang', e.target.selectedIndex)
 })
+
+// INITIALIZATION
+//TODO Move other initialization things down here
+var numEditors = contentBody.children.length-1
+if (!model.htmlShow) {
+  hideHtmlEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.jsShow) {
+  hideJsEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.cssShow) {
+  hideCssEditor(numEditors)
+}
 function Model (obj, onChange) {
   this.js = ""
   this.html = ""
