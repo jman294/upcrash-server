@@ -370,7 +370,7 @@ function hideCssEditor (numEditors) {
 
 
 // SAVE
-var bar = document.getElementById('bar')
+var saveNotifier = document.getElementById('savenoti')
 function updateModel () {
   model.setProp('js', es.js.ace.session.getValue())
   model.setProp('html', es.html.ace.session.getValue())
@@ -388,6 +388,7 @@ function save (cb) {
     NProgress.start()
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
+
       NProgress.done()
       if (oReq.status === 403) {
         setNewId(sendRequest)
@@ -395,10 +396,25 @@ function save (cb) {
       } else if (oReq.status >= 400) {
         //TODO alert that it cannot be saved
         console.log('%ccannot save!', 'color: red')
+        saveNotifier.style.display = 'inline-block'
+        saveNotifier.innerHTML = 'Cannot Save!'
+        saveNotifier.classList.remove('good')
+        saveNotifier.classList.add('bad')
       } else {
+        saveNotifier.style.display = 'inline-block'
+        saveNotifier.innerHTML = 'Saved!'
         console.log('%csaved!', 'color: red')
+        saveNotifier.classList.add('good')
+        saveNotifier.classList.remove('bad')
       }
       !!cb && cb()
+    })
+    oReq.addEventListener('error', function () {
+      NProgress.done()
+      saveNotifier.style.display = 'inline-block'
+      saveNotifier.innerHTML = 'Cannot Save!'
+      saveNotifier.classList.remove('good')
+      saveNotifier.classList.add('bad')
     })
     oReq.open('POST', '/save/'+id)
     oReq.send(JSON.stringify(model))
