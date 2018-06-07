@@ -389,7 +389,6 @@ function save (cb) {
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
 
-      NProgress.done()
       if (oReq.status === 403) {
         setNewId(sendRequest)
         return
@@ -407,14 +406,16 @@ function save (cb) {
         saveNotifier.classList.add('good')
         saveNotifier.classList.remove('bad')
       }
-      !!cb && cb()
     })
     oReq.addEventListener('error', function () {
-      NProgress.done()
       saveNotifier.style.display = 'inline-block'
       saveNotifier.innerHTML = 'Cannot Save!'
       saveNotifier.classList.remove('good')
       saveNotifier.classList.add('bad')
+    })
+    oReq.addEventListener('loadend', function () {
+      NProgress.done()
+      !!cb && cb()
     })
     oReq.open('POST', '/save/'+id)
     oReq.send(JSON.stringify(model))
