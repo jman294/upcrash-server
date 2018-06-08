@@ -85,7 +85,7 @@ class ServerApi {
           }
         } else {
           return new Response.error(HttpStatus.BAD_REQUEST,
-              new ServerException(ServerErrors.invalidCrash));
+              new ServerException(ServerErrors.invalidCrashDoesNotConform));
         }
       } on FormatException {
         return new Response.error(HttpStatus.BAD_REQUEST,
