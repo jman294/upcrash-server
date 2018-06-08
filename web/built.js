@@ -498,6 +498,9 @@ cloneLink.addEventListener('click', function (e) {
 })
 
 // SETTINGS
+var JS = 0
+var HTML = 1
+var CSS = 2
 var settings = document.getElementsByClassName('set')
 var exits = document.getElementsByClassName('exit')
 var conheads = document.getElementsByClassName('conhead')
@@ -522,19 +525,19 @@ loadType.addEventListener('change', function (e) {
 
 var jsLang = document.getElementById('jslang')
 jsLang.selectedIndex = model.jsLang
-conheads[0].innerHTML = jsLang.options[model.jsLang].value
+conheads[JS].innerHTML = jsLang.options[model.jsLang].value
 jsLang.addEventListener('change', function (e) {
   model.setProp('jsLang', e.target.selectedIndex)
-  conheads[0].innerHTML = e.target.value
+  conheads[JS].innerHTML = e.target.value
 })
 
 //// HTML Settings
 var htmlLang = document.getElementById('htmllang')
 htmlLang.selectedIndex = model.htmlLang
-conheads[1].innerHTML = htmlLang.options[model.htmlLang].value
+conheads[HTML].innerHTML = htmlLang.options[model.htmlLang].value
 htmlLang.addEventListener('change', function (e) {
   model.setProp('htmlLang', e.target.selectedIndex)
-  conheads[1].innerHTML = e.target.value
+  conheads[HTML].innerHTML = e.target.value
 })
 
 var highlightCheck = document.getElementById('highlightel')
@@ -547,10 +550,10 @@ highlightCheck.addEventListener('change', function (e) {
 //// CSS Settings
 var cssLang = document.getElementById('csslang')
 cssLang.selectedIndex = model.cssLang
-conheads[2].innerHTML = cssLang.options[model.cssLang].value
+conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
 cssLang.addEventListener('change', function (e) {
   model.setProp('cssLang', e.target.selectedIndex)
-  conheads[2].innerHTML = e.target.value
+  conheads[CSS].innerHTML = e.target.value
 })
 
 //// Editor settings
