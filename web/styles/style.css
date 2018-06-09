@@ -52,7 +52,7 @@ html, body {
 
   background-color: #282828;
 
-  z-index: 100;
+  z-index: 100000;
 }
 
 #modal textarea {
@@ -241,7 +241,7 @@ html, body {
 
   background-color: #282828;
 
-  z-index: 1000;
+  z-index: 100;
 }
 
 label {

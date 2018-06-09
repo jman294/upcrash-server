@@ -9,32 +9,25 @@ var es = {
     ace: ace.edit('jsedit'),
     typeTimer: -1,
     saveTimer: -1,
-    container: document.querySelector('#jscon'),
-    dropzone: document.querySelector('#jscon .dropzone'),
-    check: document.querySelector('#jscheck')
+    container: document.getElementById('jscon'),
+    check: document.getElementById('jscheck')
   },
   css: {
     ace: ace.edit('cssedit'),
     typeTimer: -1,
     saveTimer: -1,
-    container: document.querySelector('#csscon'),
-    dropzone: document.querySelector('#csscon .dropzone'),
-    check: document.querySelector('#csscheck')
+    container: document.getElementById('csscon'),
+    check: document.getElementById('csscheck')
   },
   html: {
     ace: ace.edit('htmledit'),
     typeTimer: -1,
     saveTimer: -1,
-    container: document.querySelector('#htmlcon'),
-    dropzone: document.querySelector('#htmlcon .dropzone'),
-    check: document.querySelector('#htmlcheck')
+    container: document.getElementById('htmlcon'),
+    check: document.getElementById('htmlcheck')
   }
 }
 model = new Model(template, onModelChange)
-es.html.ace.setValue(model.html, -1)
-es.js.ace.setValue(model.js, -1)
-es.css.ace.setValue(model.css, -1)
-highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
 es.js.ace.getSession().setTabSize(2)
@@ -94,7 +87,6 @@ for (var e in es) {
 
   es[e].ace.on('change', function () {
     clearTimeout(es[e].typeTimer)
-    clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
       updateModel()
     }, 1000)
@@ -107,7 +99,6 @@ for (var e in es) {
   })
 }
 
-var result = document.getElementById('result')
 function resetIframe () {
   var iframe = document.getElementsByTagName('iframe')[0]
   iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
@@ -115,13 +106,16 @@ function resetIframe () {
 }
 
 // RESIZE IFRAME
+var result = document.getElementById('result')
 var fullSize = document.getElementById('fullsize')
 var resultPop = document.getElementById('resultpop')
 var dims = document.getElementsByClassName('iframedim')
+var WIDTH = 0
+var HEIGHT = 1
 function setResultSize () {
   var iframe = document.getElementsByTagName('iframe')[0]
-  dims[0].value = iframe.offsetWidth
-  dims[1].value = iframe.offsetHeight
+  dims[WIDTH].value = iframe.offsetWidth
+  dims[HEIGHT].value = iframe.offsetHeight
 }
 for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('keydown', function (e) {
@@ -135,20 +129,20 @@ for (var t = 0; t<dims.length; t++) {
     var rwidth = result.offsetWidth
     var rheight = result.offsetHeight
     var iframe = document.getElementsByTagName('iframe')[0]
-    if (parseInt(dims[0].value) > parseInt(dims[1].value)) {
-      if (parseInt(dims[0].value) > rwidth) {
-        iframe.style.transform = 'scale('+rwidth/dims[0].value+')'
+    if (parseInt(dims[WIDTH].value) > parseInt(dims[1].value)) {
+      if (parseInt(dims[WIDTH].value) > rwidth) {
+        iframe.style.transform = 'scale('+rwidth/dims[WIDTH].value+')'
       } else {
         iframe.style.transform = 'scale(1)'
       }
     } else {
-      if (parseInt(dims[1].value) > rheight) {
-        iframe.style.transform = 'scale('+rheight/dims[1].value+')'
+      if (parseInt(dims[HEIGHT].value) > rheight) {
+        iframe.style.transform = 'scale('+rheight/dims[HEIGHT].value+')'
       } else {
         iframe.style.transform = 'scale(1)'
       }
     }
-    resizeIframe(dims[0].value, dims[1].value)
+    resizeIframe(dims[WIDTH].value, dims[HEIGHT].value)
   })
 }
 function resizeIframe (width, height) {
@@ -193,8 +187,8 @@ fullSize.addEventListener('click', function () {
   iframe.style.transform = 'scale(1)'
   iframe.style.width = '100%'
   iframe.style.height = '100%'
-  dims[0].value = iframe.offsetWidth
-  dims[1].value = iframe.offsetHeight
+  dims[WIDTH].value = iframe.offsetWidth
+  dims[HEIGHT].value = iframe.offsetHeight
 })
 
 //// Presets
@@ -518,14 +512,11 @@ for (var conhead = 0; conhead < conheads.length; conhead++) {
 
 //// JS Settings
 var loadType = document.getElementById('loadtype')
-loadType.selectedIndex = model.loadType
 loadType.addEventListener('change', function (e) {
   model.setProp('loadType', e.target.selectedIndex)
 })
 
 var jsLang = document.getElementById('jslang')
-jsLang.selectedIndex = model.jsLang
-conheads[JS].innerHTML = jsLang.options[model.jsLang].value
 jsLang.addEventListener('change', function (e) {
   model.setProp('jsLang', e.target.selectedIndex)
   conheads[JS].innerHTML = e.target.value
@@ -533,15 +524,12 @@ jsLang.addEventListener('change', function (e) {
 
 //// HTML Settings
 var htmlLang = document.getElementById('htmllang')
-htmlLang.selectedIndex = model.htmlLang
-conheads[HTML].innerHTML = htmlLang.options[model.htmlLang].value
 htmlLang.addEventListener('change', function (e) {
   model.setProp('htmlLang', e.target.selectedIndex)
   conheads[HTML].innerHTML = e.target.value
 })
 
 var highlightCheck = document.getElementById('highlightel')
-highlightCheck.checked = model.highlightElement
 highlightCheck.addEventListener('change', function (e) {
   highlightElement = e.target.checked
   model.setProp('highlightElement', e.target.checked)
@@ -549,8 +537,6 @@ highlightCheck.addEventListener('change', function (e) {
 
 //// CSS Settings
 var cssLang = document.getElementById('csslang')
-cssLang.selectedIndex = model.cssLang
-conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
 cssLang.addEventListener('change', function (e) {
   model.setProp('cssLang', e.target.selectedIndex)
   conheads[CSS].innerHTML = e.target.value
@@ -558,7 +544,6 @@ cssLang.addEventListener('change', function (e) {
 
 //// Editor settings
 var lintCheck = document.getElementById('lintcheck')
-lintCheck.checked = model.lintCheck
 lintCheck.addEventListener('change', function (e) {
   model.setProp('lintCheck', e.target.checked)
   for (var ed in es) {
@@ -581,6 +566,24 @@ numEditors = contentBody.children.length-1
 if (!model.cssShow) {
   hideCssEditor(numEditors)
 }
+
+es.html.ace.setValue(model.html, -1)
+es.js.ace.setValue(model.js, -1)
+es.css.ace.setValue(model.css, -1)
+
+loadType.selectedIndex = model.loadType
+jsLang.selectedIndex = model.jsLang
+conheads[JS].innerHTML = jsLang.options[model.jsLang].value
+
+htmlLang.selectedIndex = model.htmlLang
+conheads[HTML].innerHTML = htmlLang.options[model.htmlLang].value
+highlightCheck.checked = model.highlightElement
+highlightSelection = model.highlightElement;
+
+cssLang.selectedIndex = model.cssLang
+conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
+
+lintCheck.checked = model.lintCheck
 function Model (obj, onChange) {
   this.js = ""
   this.html = ""
