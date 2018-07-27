@@ -4,6 +4,9 @@ class Model {
   String js;
   String html;
   String css;
+  String uncompiledJS;
+  String uncompiledHTML;
+  String uncompiledCSS;
 
   bool jsShow;
   bool htmlShow;
@@ -21,6 +24,9 @@ class Model {
       this.js,
       this.html,
       this.css,
+      this.uncompiledJS,
+      this.uncompiledHTML,
+      this.uncompiledCSS,
       this.jsShow,
       this.htmlShow,
       this.cssShow,
@@ -32,7 +38,7 @@ class Model {
       this.lintCheck);
 
   factory Model.default_() {
-    return new Model("", "", "", true, true, true, false, 3, 0, 0, 0, true);
+    return new Model("", "", "", "", "", "", true, true, true, false, 3, 0, 0, 0, true);
   }
 
   static conformsToModel(Map json) {
@@ -41,6 +47,9 @@ class Model {
       json['js'] != null &&
       json['html'] != null &&
       json['css'] != null &&
+      json['uncompiledJS'] != null &&
+      json['uncompiledHTML'] != null &&
+      json['uncompiledCSS'] != null &&
       json['jsShow'] != null &&
       json['htmlShow'] != null &&
       json['cssShow'] != null &&
@@ -55,6 +64,9 @@ class Model {
       json['js'] is String &&
       json['html'] is String &&
       json['css'] is String &&
+      json['uncompiledJS'] is String &&
+      json['uncompiledHTML'] is String &&
+      json['uncompiledCSS'] is String &&
       json['jsShow'] is bool &&
       json['htmlShow'] is bool &&
       json['cssShow'] is bool &&

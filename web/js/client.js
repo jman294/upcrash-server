@@ -90,12 +90,6 @@ for (var e in es) {
     es[e].typeTimer = setTimeout(function () {
       updateModel()
     }, 1000)
-    var range = es.html.ace.env.editor.find('<',
-      {
-        preventScroll: true,
-        backwards: false
-      }
-    )
   })
 }
 
@@ -367,7 +361,21 @@ function hideCssEditor (numEditors) {
 // SAVE
 var saveNotifier = document.getElementById('savenoti')
 function updateModel () {
-  model.setProp('js', es.js.ace.session.getValue())
+  var inputJS = es.js.ace.session.getValue()
+  if (model.willChange('js', inputJS)) {
+    if (usingJSTranspiler) {
+      var compiledJS = compileJS(inputJS, jsLang.selectedIndex)
+      if (compiledJS === false) {
+        model.setProp('uncompiledJS', inputJS)
+      } else {
+        model.setProp('js', compiledJS)
+        model.setProp('uncompiledJS', inputJS)
+      }
+    } else {
+      model.setProp('js', es.js.ace.session.getValue())
+      model.setProp('uncompiledJS', '')
+    }
+  }
   model.setProp('html', es.html.ace.session.getValue())
   model.setProp('css', es.css.ace.session.getValue())
 }
@@ -517,8 +525,10 @@ loadType.addEventListener('change', function (e) {
 })
 
 var jsLang = document.getElementById('jslang')
+var usingJSTranspiler = false
 jsLang.addEventListener('change', function (e) {
   model.setProp('jsLang', e.target.selectedIndex)
+  usingJSTranspiler = e.target.selectedIndex !== 0
   conheads[JS].innerHTML = e.target.value
 })
 
@@ -547,13 +557,23 @@ var lintCheck = document.getElementById('lintcheck')
 lintCheck.addEventListener('change', function (e) {
   model.setProp('lintCheck', e.target.checked)
   for (var ed in es) {
-    console.log(es[ed])
     es[ed].ace.getSession().setUseWorker(e.target.checked)
   }
 })
 
+// COMPILERS
+function compileJS (rawJS, mode) {
+  switch (mode) {
+    case 0:
+      return rawJS
+    case 1:
+      return Babel.transform(rawJS, { presets: ['es2015'] }).code
+    case 2:
+      return Babel.transform(CoffeeScript.compile(rawJS), { presets: ['es2015'] }).code
+  }
+}
+
 // INITIALIZATION
-//TODO Move other initialization things down here
 var numEditors = contentBody.children.length-1
 if (!model.htmlShow) {
   hideHtmlEditor(numEditors)
@@ -567,12 +587,9 @@ if (!model.cssShow) {
   hideCssEditor(numEditors)
 }
 
-es.html.ace.setValue(model.html, -1)
-es.js.ace.setValue(model.js, -1)
-es.css.ace.setValue(model.css, -1)
-
 loadType.selectedIndex = model.loadType
 jsLang.selectedIndex = model.jsLang
+usingJSTranspiler = jsLang.selectedIndex !== 0
 conheads[JS].innerHTML = jsLang.options[model.jsLang].value
 
 htmlLang.selectedIndex = model.htmlLang
@@ -584,3 +601,11 @@ cssLang.selectedIndex = model.cssLang
 conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
 
 lintCheck.checked = model.lintCheck
+
+if (usingJSTranspiler) {
+  es.js.ace.setValue(model.uncompiledJS, -1)
+} else {
+  es.js.ace.setValue(model.js)
+}
+es.html.ace.setValue(model.html, -1)
+es.css.ace.setValue(model.css, -1)
