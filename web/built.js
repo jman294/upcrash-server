@@ -2,37 +2,32 @@ var highlightSelection = true
 var saved = false
 var model
 
+NProgress.configure({ showSpinner: false })
+
 var es = {
   js: {
     ace: ace.edit('jsedit'),
     typeTimer: -1,
     saveTimer: -1,
-    container: document.querySelector('#jscon'),
-    dropzone: document.querySelector('#jscon .dropzone'),
-    check: document.querySelector('#jscheck')
+    container: document.getElementById('jscon'),
+    check: document.getElementById('jscheck')
   },
   css: {
     ace: ace.edit('cssedit'),
     typeTimer: -1,
     saveTimer: -1,
-    container: document.querySelector('#csscon'),
-    dropzone: document.querySelector('#csscon .dropzone'),
-    check: document.querySelector('#csscheck')
+    container: document.getElementById('csscon'),
+    check: document.getElementById('csscheck')
   },
   html: {
     ace: ace.edit('htmledit'),
     typeTimer: -1,
     saveTimer: -1,
-    container: document.querySelector('#htmlcon'),
-    dropzone: document.querySelector('#htmlcon .dropzone'),
-    check: document.querySelector('#htmlcheck')
+    container: document.getElementById('htmlcon'),
+    check: document.getElementById('htmlcheck')
   }
 }
 model = new Model(template, onModelChange)
-es.html.ace.setValue(template.html, -1)
-es.js.ace.setValue(template.js, -1)
-es.css.ace.setValue(template.css, -1)
-highlightSelection = model.highlightElement;
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
 es.js.ace.getSession().setTabSize(2)
@@ -55,7 +50,7 @@ function getSurroundingHtmlElement (text) {
   cursorPosition += cursor.column
   for (var j=0; j<text.length-1; j++) {
     if (j === cursorPosition) {
-      break
+        break
     }
     var c = text.charAt(j)
     if (c === '<' && text.charAt(j+1) === '/') {
@@ -84,27 +79,20 @@ es.html.ace.env.editor.selection.on('changeCursor', function () {
   }
 })
 
-for (let e in es) {
+for (var e in es) {
   es[e].ace.setShowPrintMargin(false)
   es[e].ace.getSession().setUseWrapMode(true)
   es[e].ace.setTheme('ace/theme/monokai')
+  es[e].ace.getSession().setUseWorker(model.lintCheck)
 
   es[e].ace.on('change', function () {
     clearTimeout(es[e].typeTimer)
-    clearTimeout(es[e].saveTimer)
     es[e].typeTimer = setTimeout(function () {
       updateModel()
     }, 1000)
-    var range = es.html.ace.env.editor.find('<',
-      {
-        preventScroll: true,
-        backwards: false
-      }
-    )
   })
 }
 
-var result = document.getElementById('result')
 function resetIframe () {
   var iframe = document.getElementsByTagName('iframe')[0]
   iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
@@ -112,13 +100,16 @@ function resetIframe () {
 }
 
 // RESIZE IFRAME
+var result = document.getElementById('result')
 var fullSize = document.getElementById('fullsize')
 var resultPop = document.getElementById('resultpop')
 var dims = document.getElementsByClassName('iframedim')
+var WIDTH = 0
+var HEIGHT = 1
 function setResultSize () {
   var iframe = document.getElementsByTagName('iframe')[0]
-  dims[0].value = iframe.offsetWidth
-  dims[1].value = iframe.offsetHeight
+  dims[WIDTH].value = iframe.offsetWidth
+  dims[HEIGHT].value = iframe.offsetHeight
 }
 for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('keydown', function (e) {
@@ -132,31 +123,32 @@ for (var t = 0; t<dims.length; t++) {
     var rwidth = result.offsetWidth
     var rheight = result.offsetHeight
     var iframe = document.getElementsByTagName('iframe')[0]
-    if (parseInt(dims[0].value) > parseInt(dims[1].value)) {
-      if (parseInt(dims[0].value) > rwidth) {
-        iframe.style.transform = 'scale('+rwidth/dims[0].value+')'
+    if (parseInt(dims[WIDTH].value) > parseInt(dims[1].value)) {
+      if (parseInt(dims[WIDTH].value) > rwidth) {
+        iframe.style.transform = 'scale('+rwidth/dims[WIDTH].value+')'
       } else {
         iframe.style.transform = 'scale(1)'
       }
     } else {
-      if (parseInt(dims[1].value) > rheight) {
-        iframe.style.transform = 'scale('+rheight/dims[1].value+')'
+      if (parseInt(dims[HEIGHT].value) > rheight) {
+        iframe.style.transform = 'scale('+rheight/dims[HEIGHT].value+')'
       } else {
         iframe.style.transform = 'scale(1)'
       }
     }
-    resizeIframe(dims[0].value, dims[1].value)
+    resizeIframe(dims[WIDTH].value, dims[HEIGHT].value)
   })
 }
 function resizeIframe (width, height) {
+  width = parseInt(width)
+  height = parseInt(height)
   var iframe = document.getElementsByTagName('iframe')[0]
 
   var rwidth = result.offsetWidth
-  iframe.style.width = width+'px'
-
   var rheight = result.offsetHeight
   iframe.style.height = height+'px'
-  if (rwidth > rheight) {
+  iframe.style.width = width+'px'
+  if (width > height) {
     if (width > rwidth) {
       iframe.style.transform = 'scale('+rwidth/width+')'
     } else {
@@ -189,8 +181,8 @@ fullSize.addEventListener('click', function () {
   iframe.style.transform = 'scale(1)'
   iframe.style.width = '100%'
   iframe.style.height = '100%'
-  dims[0].value = iframe.offsetWidth
-  dims[1].value = iframe.offsetHeight
+  dims[WIDTH].value = iframe.offsetWidth
+  dims[HEIGHT].value = iframe.offsetHeight
 })
 
 //// Presets
@@ -203,21 +195,8 @@ for (var i=0; i<presets.length; i++) {
   })
 }
 
-
 // LAYOUT
 var contentBody = document.getElementById('body')
-var numEditors = contentBody.children.length-1
-if (!model.htmlShow) {
-  hideHtmlEditor(numEditors)
-}
-numEditors = contentBody.children.length-1
-if (!model.jsShow) {
-  hideJsEditor(numEditors)
-}
-numEditors = contentBody.children.length-1
-if (!model.cssShow) {
-  hideCssEditor(numEditors)
-}
 var checkBoxes = document.getElementsByClassName('check')
 for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
@@ -378,46 +357,70 @@ function hideCssEditor (numEditors) {
   es.css.check.checked = false
 }
 
-var highlightCheck = document.getElementById('highlight')
 
 // SAVE
-var bar = document.getElementById('bar')
+var saveNotifier = document.getElementById('savenoti')
 function updateModel () {
-  model.setProp('js', es.js.ace.session.getValue())
+  var inputJS = es.js.ace.session.getValue()
+  if (model.willChange('js', inputJS)) {
+    if (usingJSTranspiler) {
+      var compiledJS = compileJS(inputJS, jsLang.selectedIndex)
+      if (compiledJS === false) {
+        model.setProp('uncompiledJS', inputJS)
+      } else {
+        model.setProp('js', compiledJS)
+        model.setProp('uncompiledJS', inputJS)
+      }
+    } else {
+      model.setProp('js', es.js.ace.session.getValue())
+      model.setProp('uncompiledJS', '')
+    }
+  }
   model.setProp('html', es.html.ace.session.getValue())
   model.setProp('css', es.css.ace.session.getValue())
-  model.setProp('highlightElement', highlightSelection)
 }
+
 function onModelChange (what) {
+  saveNotifier.innerHTML = 'Unsaved!'
   if (what === 'js' || what === 'html' || what === 'css') {
     save(resetIframe)
   } else {
     save(null)
   }
 }
+
 function save (cb) {
   function sendRequest () {
+    NProgress.start()
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
+
       if (oReq.status === 403) {
         setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
         //TODO alert that it cannot be saved
         console.log('%ccannot save!', 'color: red')
+        saveNotifier.style.display = 'inline-block'
+        saveNotifier.innerHTML = 'Cannot Save!'
+        saveNotifier.classList.remove('good')
+        saveNotifier.classList.add('bad')
       } else {
+        saveNotifier.style.display = 'inline-block'
+        saveNotifier.innerHTML = 'Saved!'
         console.log('%csaved!', 'color: red')
-        bar.style.width = '100%'
-        setTimeout(function () {
-          bar.style.opacity = '0'
-        }, 1100)
-        setTimeout(function () {
-          bar.style.width = '0%';
-        }, 2100)
-        setTimeout(function () {
-          bar.style.opacity = '1'
-        }, 3100)
+        saveNotifier.classList.add('good')
+        saveNotifier.classList.remove('bad')
       }
+    })
+    oReq.addEventListener('error', function () {
+      saveNotifier.style.display = 'inline-block'
+      saveNotifier.innerHTML = 'Cannot Save!'
+      saveNotifier.classList.remove('good')
+      saveNotifier.classList.add('bad')
+    })
+    oReq.addEventListener('loadend', function () {
+      NProgress.done()
       !!cb && cb()
     })
     oReq.open('POST', '/save/'+id)
@@ -444,8 +447,6 @@ function setNewId (cb) {
 
 window.onload = function () {
   setResultSize()
-  highlightCheck.checked = template.highlightElement
-  var iframe = document.getElementsByTagName('iframe')[0]
 }
 
 // HEADER BUTTONS
@@ -497,25 +498,152 @@ cloneLink.addEventListener('click', function (e) {
   e.preventDefault()
   setNewId(function () {})
 })
+
+// SETTINGS
+var JS = 0
+var HTML = 1
+var CSS = 2
+var settings = document.getElementsByClassName('set')
+var exits = document.getElementsByClassName('exit')
+var conheads = document.getElementsByClassName('conhead')
+
+for (var exit = 0; exit < exits.length; exit++) {
+  exits[exit].addEventListener('click', function (e) {
+    e.target.parentElement.style.display = 'none'
+  })
+}
+for (var conhead = 0; conhead < conheads.length; conhead++) {
+  conheads[conhead].addEventListener('click', function (e) {
+    e.target.parentElement.firstElementChild.style.display = 'block'
+  })
+}
+
+//// JS Settings
+var loadType = document.getElementById('loadtype')
+loadType.addEventListener('change', function (e) {
+  model.setProp('loadType', e.target.selectedIndex)
+})
+
+var jsLang = document.getElementById('jslang')
+var usingJSTranspiler = false
+jsLang.addEventListener('change', function (e) {
+  model.setProp('jsLang', e.target.selectedIndex)
+  usingJSTranspiler = e.target.selectedIndex !== 0
+  conheads[JS].innerHTML = e.target.value
+})
+
+//// HTML Settings
+var htmlLang = document.getElementById('htmllang')
+htmlLang.addEventListener('change', function (e) {
+  model.setProp('htmlLang', e.target.selectedIndex)
+  conheads[HTML].innerHTML = e.target.value
+})
+
+var highlightCheck = document.getElementById('highlightel')
+highlightCheck.addEventListener('change', function (e) {
+  highlightElement = e.target.checked
+  model.setProp('highlightElement', e.target.checked)
+})
+
+//// CSS Settings
+var cssLang = document.getElementById('csslang')
+cssLang.addEventListener('change', function (e) {
+  model.setProp('cssLang', e.target.selectedIndex)
+  conheads[CSS].innerHTML = e.target.value
+})
+
+//// Editor settings
+var lintCheck = document.getElementById('lintcheck')
+lintCheck.addEventListener('change', function (e) {
+  model.setProp('lintCheck', e.target.checked)
+  for (var ed in es) {
+    es[ed].ace.getSession().setUseWorker(e.target.checked)
+  }
+})
+
+// COMPILERS
+function compileJS (rawJS, mode) {
+  switch (mode) {
+    case 0:
+      return rawJS
+    case 1:
+      return Babel.transform(rawJS, { presets: ['es2015'] }).code
+    case 2:
+      return Babel.transform(CoffeeScript.compile(rawJS), { presets: ['es2015'] }).code
+  }
+}
+
+// INITIALIZATION
+var numEditors = contentBody.children.length-1
+if (!model.htmlShow) {
+  hideHtmlEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.jsShow) {
+  hideJsEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.cssShow) {
+  hideCssEditor(numEditors)
+}
+
+loadType.selectedIndex = model.loadType
+jsLang.selectedIndex = model.jsLang
+usingJSTranspiler = jsLang.selectedIndex !== 0
+conheads[JS].innerHTML = jsLang.options[model.jsLang].value
+
+htmlLang.selectedIndex = model.htmlLang
+conheads[HTML].innerHTML = htmlLang.options[model.htmlLang].value
+highlightCheck.checked = model.highlightElement
+highlightSelection = model.highlightElement;
+
+cssLang.selectedIndex = model.cssLang
+conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
+
+lintCheck.checked = model.lintCheck
+
+if (usingJSTranspiler) {
+  es.js.ace.setValue(model.uncompiledJS, -1)
+} else {
+  es.js.ace.setValue(model.js)
+}
+es.html.ace.setValue(model.html, -1)
+es.css.ace.setValue(model.css, -1)
 function Model (obj, onChange) {
   this.js = ""
   this.html = ""
   this.css = ""
+  this.uncompiledJS = ""
+  this.uncompiledHTML = ""
+  this.uncompiledCSS = ""
 
   this.jsShow = true
   this.htmlShow = true
   this.cssShow = true
 
+  this.loadType = 3
+  this.jsLang = 0
+  this.htmlLang = 0
   this.highlightElement = false
+  this.cssLang = 0
+
+  this.lintCheck = true
 
   this.changed = onChange
 
   this.setProp = function (prop, newValue) {
-    if (newValue != this[prop]) {
+    if (newValue !== this[prop]) {
       this[prop] = newValue
       this.changed(prop)
+      return false
+    } else {
+      return true
     }
   }
+
+  this.willChange = function (prop, newValue) {
+    return newValue !== this[prop]
+  }
+
   for (var prop in obj) this[prop] = obj[prop];
 }
-

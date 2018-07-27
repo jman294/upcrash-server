@@ -4,28 +4,91 @@ class Model {
   String js;
   String html;
   String css;
+  String uncompiledJS;
+  String uncompiledHTML;
+  String uncompiledCSS;
 
   bool jsShow;
   bool htmlShow;
   bool cssShow;
   bool highlightElement;
 
-  Model(this.js, this.html, this.css, this.jsShow, this.htmlShow, this.cssShow,
-      this.highlightElement);
+  int loadType;
+  int jsLang;
+  int htmlLang;
+  int cssLang;
+
+  bool lintCheck;
+
+  Model(
+      this.js,
+      this.html,
+      this.css,
+      this.uncompiledJS,
+      this.uncompiledHTML,
+      this.uncompiledCSS,
+      this.jsShow,
+      this.htmlShow,
+      this.cssShow,
+      this.highlightElement,
+      this.loadType,
+      this.jsLang,
+      this.htmlLang,
+      this.cssLang,
+      this.lintCheck);
 
   factory Model.default_() {
-    return new Model("", "", "", true, true, true, false);
+    return new Model("", "", "", "", "", "", true, true, true, false, 3, 0, 0, 0, true);
   }
 
-  static conformsToModel (Map json) {
-    //TODO hold all model fields in an array for easier serialization
-    return json['js'] != null &&
-           json['html'] != null &&
-           json['css'] != null &&
-           json['jsShow'] != null &&
-           json['htmlShow'] != null &&
-           json['cssShow'] != null &&
-           json['highlightElement'] != null;
+  static conformsToModel(Map json) {
+    //TODO make this expandable with constraint system
+    bool hasFields =
+      json['js'] != null &&
+      json['html'] != null &&
+      json['css'] != null &&
+      json['uncompiledJS'] != null &&
+      json['uncompiledHTML'] != null &&
+      json['uncompiledCSS'] != null &&
+      json['jsShow'] != null &&
+      json['htmlShow'] != null &&
+      json['cssShow'] != null &&
+      json['highlightElement'] != null &&
+      json['loadType'] != null &&
+      json['jsLang'] != null &&
+      json['htmlLang'] != null &&
+      json['cssLang'] != null &&
+      json['lintCheck'] != null;
+    if (!hasFields) return false;
+    bool fieldTypesCorrect =
+      json['js'] is String &&
+      json['html'] is String &&
+      json['css'] is String &&
+      json['uncompiledJS'] is String &&
+      json['uncompiledHTML'] is String &&
+      json['uncompiledCSS'] is String &&
+      json['jsShow'] is bool &&
+      json['htmlShow'] is bool &&
+      json['cssShow'] is bool &&
+      json['highlightElement'] is bool &&
+      json['loadType'] is int &&
+      json['jsLang'] is int &&
+      json['htmlLang'] is int &&
+      json['cssLang'] is int &&
+      json['lintCheck'] is bool;
+    if (!fieldTypesCorrect) return false;
+    bool fieldValuesCorrect =
+      json['loadType'] >= 0 &&
+      json['loadType'] <= 3 &&
+      json['jsLang'] >= 0 &&
+      json['jsLang'] <= 4 &&
+      json['htmlLang'] >= 0 &&
+      json['htmlLang'] <= 2 &&
+      json['cssLang'] >= 0 &&
+      json['cssLang'] <= 3;
+    if (!fieldValuesCorrect) return false;
+
+    return true;
   }
 
   Map toJson() {

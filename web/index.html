@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
 
     <link href="styles/style.css" rel="stylesheet">
+    <link href="styles/nprogress.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -19,7 +20,6 @@
     </style>
   </head>
   <body>
-    <div id="bar"></div>
     <div id="header">
       <img src="images/logo.png" alt="upcrash logo" title="Upcrash"></img>
       <a id="aboutbutton">ABOUT</a>
@@ -39,26 +39,69 @@
       <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
       <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
       <span class="checkc"><input id="htmlcheck" class="check" type="checkbox" checked>HTML</span>
-      <!--<span class="checkc"><input id="highlight" class="check" type="checkbox">Highlight edited element?</span>-->
+      <span class="checkc"><input id="lintcheck" class="check" type="checkbox" checked>Lint?</span>
+      <div id="noticontainer">
+        <span id="savenoti">Saved!</span>
+      </div>
     </div>
 
     <div id="body">
       <div id="jscon" class="con">
+        <div id="jsset" class="set">
+          <i id="jsexit" class="exit"></i>
+
+          <label for="loadtype">Script Load Type</label>
+          <select id="loadtype" name="loadtype">
+            <option value="on load" data-loadtype="0">On Load</option>
+            <option value="on DOM ready" data-loadtype="1">On DOM Ready</option>
+            <option value="bottom of head" data-loadtype="2">Bottom of head</option>
+            <option value="bottom of body" data-loadtype="3">Bottom of body</option>
+          </select>
+
+          <label for="jslang">Language</label>
+          <select id="jslang" name="jslang">
+            <option value="javascript" data-jslang="0">This Browser's JS</option>
+            <option value="es6" data-jslang="1">ES6 with Babel</option>
+            <option value="coffeescript" data-jslang="2">CoffeeScript</option>
+            <option value="typescript" data-jslang="3">TypeScript</option>
+            <option value="jsx" data-jslang="4">JSX+Babel</option>
+          </select>
+        </div>
         <div class="conhead">
-          JAVASCRIPT
         </div>
         <div id="jsedit" class="edit"></div>
       </div>
       <div id="htmlcon" class="con">
+        <div id="htmlset" class="set">
+          <i id="htmlexit" class="exit"></i>
+
+          <label for="htmllang">Preprocessor</label>
+          <select id="htmllang" name="htmllang">
+            <option value="html" data-htmllang="0">Plain HTML</option>
+            <option value="haml" data-htmllang="1">Haml</option>
+            <option value="md" data-htmllang="2">Markdown</option>
+          </select>
+
+          <label for="highlightel">Highlight Selected Element</label>
+          <input id="highlightel" class="check" type="checkbox" name="highlightel">
+        </div>
         <div class="conhead">
-          HTML
         </div>
         <div id="htmledit" class="edit"></div>
-        <!--<div class="dropzone"></div>-->
       </div>
       <div id="csscon" class="con">
+        <div id="cssset" class="set">
+          <i id="cssexit" class="exit"></i>
+
+          <label for="csslang">Preprocessor</label>
+          <select id="csslang" name="csslang">
+            <option value="css" data-csslang="0">CSS</option>
+            <option value="scss" data-csslang="1">SCSS</option>
+            <option value="sass" data-csslang="2">SASS</option>
+            <option value="stylus" data-csslang="3">Stylus</option>
+          </select>
+        </div>
         <div class="conhead">
-          CSS
         </div>
         <div id="cssedit" class="edit"></div>
       </div>
@@ -95,6 +138,11 @@
 var id = '%ID%'
 var template = %FILLIN%
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20171210/classList.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://coffeescript.org/v2/browser-compiler/coffeescript.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="built.js" type="text/javascript" charset="utf-8"></script>
   </body>

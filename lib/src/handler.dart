@@ -93,6 +93,9 @@ class UpcrashServer {
               //TODO add dedicated 404 error page that says sorry
               resp = new Response.error(HttpStatus.NOT_FOUND,
                   new ServerException(ServerErrors.invalidUri));
+            } on Exception catch (e) {
+              resp = new Response.error(HttpStatus.NOT_FOUND,
+                  new ServerException(ServerErrors.invalidUri));
             }
           }
           break;
