@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:mime_type/mime_type.dart';
+import 'package:mime/mime.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:firebase/firebase_io.dart';
 import 'package:logging/logging.dart';
@@ -60,13 +60,14 @@ class UpcrashServer {
   Future handle(HttpRequest req) async {
     List<String> uriParts = req.uri.pathSegments;
 
+    print(req.uri);
     Response resp = new Response();
     if (uriParts.length == 0) {
       resp = await _serApi.home();
     } else {
       switch (uriParts[0]) {
         case 'feedback':
-          resp = await _serApi.feedback(await UTF8.decodeStream(req), Platform.environment['PASSW']);
+          resp = await _serApi.feedback((new Utf8Decoder()).convert(), Platform.environment['PASSW']);
           break;
         case 'save':
           if (uriParts.length == 2 && _isValidId(uriParts[1])) {
@@ -88,7 +89,7 @@ class UpcrashServer {
             try {
               List<int> fileBytes = await new File('web'+req.uri.toFilePath()).readAsBytes();
               resp.add(fileBytes);
-              resp.headers['Content-Type'] = mime(req.uri.toFilePath());
+              resp.headers['Content-Type'] = lookupMimeType(req.uri.toFilePath());
             } on FileSystemException {
               //TODO add dedicated 404 error page that says sorry
               resp = new Response.error(HttpStatus.NOT_FOUND,
