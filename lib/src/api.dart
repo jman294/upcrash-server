@@ -124,27 +124,4 @@ class ServerApi {
     res.write(json.encode({'newId': id.toString()}));
     return res;
   }
-
-  // To be deprecated
-  Future<Response> feedback(String payload, String passw) async {
-    Response res = new Response();
-
-    GmailSmtpOptions opts = new GmailSmtpOptions()
-      ..username = 'upcrashfeedback@gmail.com'
-      ..password = passw;
-
-    SmtpTransport trans = new SmtpTransport(opts);
-    Envelope envelope = new Envelope()
-      ..from = 'jduplessis294@gmail.com'
-      ..recipients.add('jduplessis294@gmail.com')
-      ..subject = 'Upcrash Feedback'
-      ..text = payload;
-
-    await trans
-        .send(envelope)
-        .then((envelope) => print('Email sent!'))
-        .catchError((e) => print('Error occurred: $e'));
-
-    return res;
-  }
 }
