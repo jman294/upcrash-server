@@ -26,7 +26,7 @@ class UpcrashServer {
       ..onRecord.listen(print);
   }
 
-  Future auth() async {
+  Future auth(String address, String port) async {
     final Map<String, String> envVars = Platform.environment;
     String privateKey;
     if (envVars['WEBSITEU'] != null) {
@@ -35,9 +35,8 @@ class UpcrashServer {
       throw new ServerException(ServerErrors.couldNotAuthenticate);
     }
 
-    final String json = new JsonDecoder().convert(privateKey);
     final ServiceAccountCredentials accountCredentials =
-        new ServiceAccountCredentials.fromJson(json);
+        new ServiceAccountCredentials.fromJson(privateKey);
     final List<String> scopes = [
       'https://www.googleapis.com/auth/firebase.database',
       'https://www.googleapis.com/auth/userinfo.email'
@@ -47,8 +46,14 @@ class UpcrashServer {
         await obtainAccessCredentialsViaServiceAccount(
             accountCredentials, scopes, client);
     _fbClient = new FirebaseClient(credentials.accessToken.data);
+    String webHost = envVars['WEB_HOST'];
+    if (envVars['FB_HOST'] == null || envVars['WEB_HOST'] == null) {
+       throw new ServerException(ServerErrors.couldNotInitialize);
+    } else if (envVars['WEB_HOST'] == 'development') {
+      webHost = address + port;
+    }
     _serApi = new ServerApi(
-        _fbClient, 'https://upcrash-server.firebaseio.com/');
+        _fbClient, envVars['FB_HOST'], webHost);
     try {
       await _serApi.init();
     } on FileSystemException {
@@ -60,15 +65,11 @@ class UpcrashServer {
   Future handle(HttpRequest req) async {
     List<String> uriParts = req.uri.pathSegments;
 
-    print(req.uri);
     Response resp = new Response();
     if (uriParts.length == 0) {
       resp = await _serApi.home();
     } else {
       switch (uriParts[0]) {
-        case 'feedback':
-          resp = await _serApi.feedback((new Utf8Decoder()).convert(), Platform.environment['PASSW']);
-          break;
         case 'save':
           if (uriParts.length == 2 && _isValidId(uriParts[1])) {
             Id id = new Id(uriParts[1]);
@@ -122,13 +123,6 @@ class UpcrashServer {
   }
 
   Future _sendApiResponse(Response apiResponse, HttpResponse response) {
-    response.statusCode = apiResponse.statusCode;
-    response.reasonPhrase = apiResponse.reasonPhrase;
-    apiResponse.headers
-        .forEach((name, value) => response.headers.add(name, value));
-    if (apiResponse.data != null) {
-      response.add(apiResponse.data);
-    }
-    return response.close();
+    return apiResponse.toHttpResponse(response).close();
   }
 }
