@@ -1,5 +1,3 @@
-library server.handler;
-
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';

@@ -22,19 +22,21 @@
   <body>
     <div id="header">
       <img src="images/logo.png" alt="upcrash logo" title="Upcrash"></img>
-      <a id="aboutbutton">ABOUT</a>
+      <a id="aboutbutton">EXPORT</a>
       <!--<a class="popup">EMBED</a>-->
       <a id="clone" class="popup">CLONE</a>
       <a id="new">NEW</a>
       <div id="modalover" class="modali"></div>
       <div id="modal" class="modali">
-        <b>Hey there!</b> Thanks for checking out Upcrash. Prototype, create, and share web snippets! <a href="https://github.com/jman294/upcrash-server" target="_blank">Visit the Github here</a>
-        <br>
-        <br>
-        We welcome your feedback:
-        <textarea id="feedarea"></textarea>
-        <button id="feedbutton">SEND</button>
-        <div id="noti">Sent!</div>
+        <textarea id="exporttextarea"></textarea>
+        <textarea id="exportcsstextarea"></textarea>
+        <!--<b>Hey there!</b> Thanks for checking out Upcrash. Prototype, create, and share web snippets! <a href="https://github.com/jman294/upcrash-server" target="_blank">Visit the Github here</a>-->
+        <!--<br>-->
+        <!--<br>-->
+        <!--We welcome your feedback:-->
+        <!--<textarea id="feedarea"></textarea>-->
+        <!--<button id="feedbutton">SEND</button>-->
+        <!--<div id="noti">Sent!</div>-->
       </div>
       <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
       <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
@@ -106,7 +108,7 @@
         <div id="cssedit" class="edit"></div>
       </div>
       <div id="result">
-        <iframe src="https://upcrash-serve.herokuapp.com/%ID%">
+        <iframe src="https://upcrash-serve.herokuapp.com/%25ID%25">
           #document
           <html>
             <body>
@@ -126,6 +128,7 @@
               <span class="preset" data-pwidth="320" data-pheight="568">iPHONE 5/SE</span>
               <span class="preset" data-pwidth="360" data-pheight="640">GALAXY S5</span>
               <span class="preset" data-pwidth="375" data-pheight="812">iPHONE X</span>
+              <span class="preset" data-pwidth="1080" data-pheight="720">DESKTOP</span>
             </div>
           </div>
           RESULT

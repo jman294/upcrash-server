@@ -171,11 +171,23 @@ result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
 var refresh = document.getElementById('refresh')
+refresh.addEventListener('mouseenter', function () {
+  refresh.style.opacity = '1';
+})
+refresh.addEventListener('mouseleave', function () {
+  refresh.style.opacity = '.6';
+})
 refresh.addEventListener('click', function () {
   resetIframe()
 })
 
 var fullSize = document.getElementById('fullsize')
+fullSize.addEventListener('mouseenter', function () {
+  fullSize.style.opacity = '1';
+})
+fullSize.addEventListener('mouseleave', function () {
+  fullSize.style.opacity = '.6';
+})
 fullSize.addEventListener('click', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
   iframe.style.transform = 'scale(1)'
@@ -450,24 +462,40 @@ window.onload = function () {
 }
 
 // HEADER BUTTONS
+var exportTemplate = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="stylesheet.css" type="text/css">
+  </head>
+  <body>
+    %HTML%
+    <script>
+      %SCRIPT%
+    </script>
+  </body>
+</html>`
 var aboutButton = document.getElementById('aboutbutton')
 var modalItems = document.getElementsByClassName('modali')
 var modalOver = modalItems[0]
-var sendFeedback = document.getElementById('feedbutton')
-var feedbackArea = document.getElementById('feedarea')
-var notification = document.getElementById('noti')
+var outputArea = document.getElementById('exporttextarea')
+var cssOutputArea = document.getElementById('exportcsstextarea')
 var aboutModalState = false
 aboutButton.addEventListener('click', function () {
   aboutModalState = !aboutModalState;
   if (aboutModalState) {
     for (var i=0; i<modalItems.length; i++) {
+      var filledInTemplate = exportTemplate.replace('%HTML%', model.html).replace('%SCRIPT%', model.js)
+      outputArea.value = filledInTemplate
+      cssOutputArea.value = model.css
       modalItems[i].style.display = 'block'
     }
   } else {
     for (var i=0; i<modalItems.length; i++) {
       modalItems[i].style.display = 'none'
     }
-    noti.style.display = 'none'
   }
 })
 modalOver.addEventListener('click', function () {
@@ -475,14 +503,6 @@ modalOver.addEventListener('click', function () {
   for (var i=0; i<modalItems.length; i++) {
     modalItems[i].style.display = 'none'
   }
-  noti.style.display = 'none'
-})
-sendFeedback.addEventListener('click', function () {
-  noti.style.display = 'block'
-  var fReq = new XMLHttpRequest()
-  fReq.open('POST', '/feedback')
-  fReq.send(feedbackArea.value)
-  feedbackArea.value = ''
 })
 
 var newLink = document.getElementById('new')
@@ -574,18 +594,18 @@ function compileJS (rawJS, mode) {
 }
 
 // INITIALIZATION
-var numEditors = contentBody.children.length-1
-if (!model.htmlShow) {
-  hideHtmlEditor(numEditors)
-}
-numEditors = contentBody.children.length-1
-if (!model.jsShow) {
-  hideJsEditor(numEditors)
-}
-numEditors = contentBody.children.length-1
-if (!model.cssShow) {
-  hideCssEditor(numEditors)
-}
+//var numEditors = contentBody.children.length-1
+//if (!model.htmlShow) {
+  //hideHtmlEditor(numEditors)
+//}
+//numEditors = contentBody.children.length-1
+//if (!model.jsShow) {
+  //hideJsEditor(numEditors)
+//}
+//numEditors = contentBody.children.length-1
+//if (!model.cssShow) {
+  //hideCssEditor(numEditors)
+//}
 
 loadType.selectedIndex = model.loadType
 jsLang.selectedIndex = model.jsLang

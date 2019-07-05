@@ -1,5 +1,3 @@
-library server;
-
 import 'dart:io';
 import 'dart:async';
 import 'package:server/src/handler.dart';

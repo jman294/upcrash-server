@@ -41,8 +41,8 @@ class Response {
     response.reasonPhrase = this.reasonPhrase;
     this.headers
         .forEach((name, value) => response.headers.add(name, value));
-    if (this.data != null) {
-      response.add(this.data);
+    if (this._data != null) {
+      response.add(this._data);
     }
     return response;
   }
