@@ -40,8 +40,8 @@ html, body {
   bottom: 0;
   left: 0;
 
-  height: 270px;
-  width: 200px;
+  height: 75%;
+  width: 50%;
 
   display: none;
 
@@ -52,15 +52,18 @@ html, body {
 
   background-color: #282828;
 
-  z-index: 100000;
+  z-index: 101;
 }
 
 #modal textarea {
-  width: 99%;
-  height: 50px;
+  width: 95%;
+  height: 25%;
+
+  display: block;
 
   resize: none;
 
+  margin: auto;
   margin-top: 6px;
 }
 
@@ -456,7 +459,7 @@ iframe {
     left: 0;
   }
 
-  .con, .edit, .checkc, #new, #clone {
+  .con, .edit, .checkc, #new, #clone, #aboutbutton {
     display: none;
   }
 }

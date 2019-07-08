@@ -462,35 +462,56 @@ window.onload = function () {
 }
 
 // HEADER BUTTONS
-var exportTemplate = `
-<!DOCTYPE html>
+var exportTemplate = `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="stylesheet.css" type="text/css">
+    %STYLE%
   </head>
   <body>
     %HTML%
-    <script>
-      %SCRIPT%
-    </script>
+    %SCRIPT%
   </body>
 </html>`
+var styleTemplate = '<style>%CSS%</style>'
+var scriptTemplate = '<script>%JS%</script>'
 var aboutButton = document.getElementById('aboutbutton')
 var modalItems = document.getElementsByClassName('modali')
 var modalOver = modalItems[0]
-var outputArea = document.getElementById('exporttextarea')
+var htmlOutputArea = document.getElementById('exporthtmltextarea')
 var cssOutputArea = document.getElementById('exportcsstextarea')
+var jsOutputArea = document.getElementById('exportjstextarea')
+var includeCssCheck = document.getElementById('includecss')
+var includeJsCheck = document.getElementById('includejs')
+var downloadButton = document.getElementById('download')
 var aboutModalState = false
+function fillInFields () {
+  var filledInTemplate = exportTemplate.replace('%HTML%', model.html)
+  if (includeJsCheck.checked) {
+    filledInTemplate = filledInTemplate.replace('%SCRIPT%', scriptTemplate.replace('%JS%', model.js))
+  } else {
+    filledInTemplate = filledInTemplate.replace('%SCRIPT%', '')
+  }
+  if (includeCssCheck.checked) {
+    filledInTemplate = filledInTemplate.replace('%STYLE%', styleTemplate.replace('%CSS%', model.css))
+  } else {
+    filledInTemplate = filledInTemplate.replace('%STYLE%', '')
+  }
+  htmlOutputArea.value = filledInTemplate
+  cssOutputArea.value = model.css
+  cssOutputArea.value = model.js
+}
 aboutButton.addEventListener('click', function () {
   aboutModalState = !aboutModalState;
   if (aboutModalState) {
-    for (var i=0; i<modalItems.length; i++) {
-      var filledInTemplate = exportTemplate.replace('%HTML%', model.html).replace('%SCRIPT%', model.js)
-      outputArea.value = filledInTemplate
-      cssOutputArea.value = model.css
+    fillInFields()
+    for (var i = 0; i < modalItems.length; i++) {
       modalItems[i].style.display = 'block'
+    }
+    if (modal.lastElementChild.nodeName == 'A') {
+      modal.removeChild(modal.lastElementChild)
     }
   } else {
     for (var i=0; i<modalItems.length; i++) {
@@ -503,6 +524,32 @@ modalOver.addEventListener('click', function () {
   for (var i=0; i<modalItems.length; i++) {
     modalItems[i].style.display = 'none'
   }
+})
+includeCssCheck.addEventListener('click', function () {
+  fillInFields()
+})
+includeJsCheck.addEventListener('click', function () {
+  fillInFields()
+})
+downloadButton.addEventListener('click', function () {
+  console.log('asdf')
+  var zip = new JSZip();
+  zip.file("index.html", exportTemplate.replace('%SCRIPT%', '').replace('%STYLE%', '').replace('%HTML%', model.html));
+  zip.file("index.js", model.js);
+  zip.file("style.css", model.css);
+  zip.generateAsync({type:"blob"})
+  .then(function(content) {
+    var blobUrl = URL.createObjectURL(content);
+    var link = document.createElement("a"); // Or maybe get it from the current document
+    link.href = blobUrl;
+    link.download = "website.zip";
+    link.innerHTML = "Click here to download the file";
+    if (modal.lastElementChild.nodeName == 'A') {
+      modal.lastElementChild.href = blobUrl
+    } else {
+      modal.appendChild(link); // Or append it whereever you want
+    }
+  });
 })
 
 var newLink = document.getElementById('new')
@@ -594,19 +641,6 @@ function compileJS (rawJS, mode) {
 }
 
 // INITIALIZATION
-//var numEditors = contentBody.children.length-1
-//if (!model.htmlShow) {
-  //hideHtmlEditor(numEditors)
-//}
-//numEditors = contentBody.children.length-1
-//if (!model.jsShow) {
-  //hideJsEditor(numEditors)
-//}
-//numEditors = contentBody.children.length-1
-//if (!model.cssShow) {
-  //hideCssEditor(numEditors)
-//}
-
 loadType.selectedIndex = model.loadType
 jsLang.selectedIndex = model.jsLang
 usingJSTranspiler = jsLang.selectedIndex !== 0
@@ -619,6 +653,20 @@ highlightSelection = model.highlightElement;
 
 cssLang.selectedIndex = model.cssLang
 conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
+var numEditors = contentBody.children.length-1
+console.log(numEditors)
+if (!model.htmlShow) {
+  hideHtmlEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.jsShow) {
+  hideJsEditor(numEditors)
+}
+numEditors = contentBody.children.length-1
+if (!model.cssShow) {
+  hideCssEditor(numEditors)
+}
+
 
 lintCheck.checked = model.lintCheck
 

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
     <title>Upcrash</title>
 
     <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
@@ -12,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <!--<link rel="manifest" href="/site.webmanifest">-->
+    <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#9e769e">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
@@ -28,15 +27,12 @@
       <a id="new">NEW</a>
       <div id="modalover" class="modali"></div>
       <div id="modal" class="modali">
-        <textarea id="exporttextarea"></textarea>
+        <span class="checkc"><input id="includejs" class="check" type="checkbox" checked>Include JS in html</span>
+        <span class="checkc"><input id="includecss" class="check" type="checkbox">Include CSS in html</span>
+        <textarea id="exporthtmltextarea"></textarea>
         <textarea id="exportcsstextarea"></textarea>
-        <!--<b>Hey there!</b> Thanks for checking out Upcrash. Prototype, create, and share web snippets! <a href="https://github.com/jman294/upcrash-server" target="_blank">Visit the Github here</a>-->
-        <!--<br>-->
-        <!--<br>-->
-        <!--We welcome your feedback:-->
-        <!--<textarea id="feedarea"></textarea>-->
-        <!--<button id="feedbutton">SEND</button>-->
-        <!--<div id="noti">Sent!</div>-->
+        <textarea id="exportjstextarea"></textarea>
+        <button id="download">DOWNLOAD AS ZIP</button>
       </div>
       <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
       <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
@@ -147,6 +143,7 @@ var template = %FILLIN%
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jszip.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="built.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>
