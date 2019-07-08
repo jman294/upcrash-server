@@ -384,12 +384,42 @@ function updateModel () {
         model.setProp('uncompiledJS', inputJS)
       }
     } else {
-      model.setProp('js', es.js.ace.session.getValue())
+      model.setProp('js', inputJS)
       model.setProp('uncompiledJS', '')
     }
   }
-  model.setProp('html', es.html.ace.session.getValue())
-  model.setProp('css', es.css.ace.session.getValue())
+  var inputHtml = es.html.ace.session.getValue()
+  if (model.willChange('html', inputHtml)) {
+    if (usingHtmlTranspiler) {
+      var compiledHtml = compileHtml(inputHtml, htmlLang.selectedIndex)
+      if (compiledHtml === false) {
+        model.setProp('uncompiledHTML', inputHtml)
+      } else {
+        model.setProp('html', compiledHtml)
+        model.setProp('uncompiledHTML', inputHtml)
+      }
+    } else {
+      model.setProp('html', inputHtml)
+      model.setProp('uncompiledHTML', '')
+    }
+  }
+  var inputCss = es.css.ace.session.getValue()
+  if (model.willChange('css', inputCss)) {
+    if (usingCssTranspiler) {
+      var compiledCss = compileCss(inputCss, cssLang.selectedIndex)
+      if (compiledCss === false) {
+        model.setProp('uncompiledCSS', inputCss)
+      } else {
+        model.setProp('css', compiledCss)
+        model.setProp('uncompiledCSS', inputCss)
+      }
+    } else {
+      model.setProp('css', inputCss)
+      model.setProp('uncompiledCSS', '')
+    }
+  }
+  //model.setProp('html', es.html.ace.session.getValue())
+  //model.setProp('css', es.css.ace.session.getValue())
 }
 
 function onModelChange (what) {
@@ -521,7 +551,7 @@ aboutButton.addEventListener('click', function () {
 })
 modalOver.addEventListener('click', function () {
   aboutModalState = false;
-  for (var i=0; i<modalItems.length; i++) {
+  for (var i = 0; i < modalItems.length; i++) {
     modalItems[i].style.display = 'none'
   }
 })
@@ -540,14 +570,14 @@ downloadButton.addEventListener('click', function () {
   zip.generateAsync({type:"blob"})
   .then(function(content) {
     var blobUrl = URL.createObjectURL(content);
-    var link = document.createElement("a"); // Or maybe get it from the current document
+    var link = document.createElement("a");
     link.href = blobUrl;
     link.download = "website.zip";
     link.innerHTML = "Click here to download the file";
     if (modal.lastElementChild.nodeName == 'A') {
       modal.lastElementChild.href = blobUrl
     } else {
-      modal.appendChild(link); // Or append it whereever you want
+      modal.appendChild(link);
     }
   });
 })
@@ -601,8 +631,10 @@ jsLang.addEventListener('change', function (e) {
 
 //// HTML Settings
 var htmlLang = document.getElementById('htmllang')
+var usingHtmlTranspiler = false
 htmlLang.addEventListener('change', function (e) {
   model.setProp('htmlLang', e.target.selectedIndex)
+  usingHtmlTranspiler = e.target.selectedIndex !== 0
   conheads[HTML].innerHTML = e.target.value
 })
 
@@ -614,8 +646,10 @@ highlightCheck.addEventListener('change', function (e) {
 
 //// CSS Settings
 var cssLang = document.getElementById('csslang')
+var usingCssTranspiler
 cssLang.addEventListener('change', function (e) {
   model.setProp('cssLang', e.target.selectedIndex)
+  usingCssTranspiler = e.target.selectedIndex !== 0
   conheads[CSS].innerHTML = e.target.value
 })
 
@@ -639,6 +673,14 @@ function compileJS (rawJS, mode) {
       return Babel.transform(CoffeeScript.compile(rawJS), { presets: ['es2015'] }).code
   }
 }
+
+//function compileHtml (rawHtml, mode) {
+  //return rawHtml
+//}
+
+//function compileCss (rawCss, mode) {
+  //return rawCss
+//}
 
 // INITIALIZATION
 loadType.selectedIndex = model.loadType

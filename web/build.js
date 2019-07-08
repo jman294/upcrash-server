@@ -17,18 +17,12 @@ let file = fs.readdir('js', function (err, files) {
         }
 
         if (stat.isFile()) {
-          fs.readFile(path.normalize(path.join('js', file)),
-            function (error, contents) {
-              if (error) {
-                console.error('Error reading file.', error)
-                return
-              }
-              var altered = contents.toString().replace(/\(([a-zA-Z]*?)\) =>/g, 'function ($1)')
-              output += altered
-              if (index === files.length-1) {
-                end(output)
-              }
-            })
+          var contents = fs.readFileSync(path.normalize(path.join('js', file)))
+          var altered = contents.toString().replace(/\(([a-zA-Z]*?)\) =>/g, 'function ($1)')
+          output += altered
+          if (index = files.length - 1) {
+            end(output)
+          }
         }
       })
     }

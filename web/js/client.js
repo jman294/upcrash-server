@@ -674,13 +674,13 @@ function compileJS (rawJS, mode) {
   }
 }
 
-function compileHtml (rawHtml, mode) {
-  return rawHtml
-}
+//function compileHtml (rawHtml, mode) {
+  //return rawHtml
+//}
 
-function compileCss (rawCss, mode) {
-  return rawCss
-}
+//function compileCss (rawCss, mode) {
+  //return rawCss
+//}
 
 // INITIALIZATION
 loadType.selectedIndex = model.loadType
