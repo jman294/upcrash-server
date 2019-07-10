@@ -52,7 +52,7 @@ html, body {
 
   background-color: #282828;
 
-  z-index: 101;
+  z-index: 500000;
 }
 
 #modal textarea {
@@ -434,6 +434,8 @@ select {
   overflow: scroll;
   overflow-y: auto;
   overflow-x: auto;
+
+  z-index: 5000;
 }
 
 iframe {

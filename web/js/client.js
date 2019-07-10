@@ -91,6 +91,15 @@ for (var e in es) {
       updateModel()
     }, 1000)
   })
+  es[e].ace.commands.addCommand({
+    name: "showKeyboardShortcuts",
+    bindKey: {win: "Ctrl-i", mac: "Command-i"},
+    exec: function(editor) {
+      //ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+        fullScreenToggle()
+      //})
+    }
+  })
 }
 
 function resetIframe () {
@@ -171,23 +180,11 @@ result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
 var refresh = document.getElementById('refresh')
-//refresh.addEventListener('mouseenter', function () {
-  //refresh.style.opacity = '1';
-//})
-//refresh.addEventListener('mouseleave', function () {
-  //refresh.style.opacity = '.6';
-//})
 refresh.addEventListener('click', function () {
   resetIframe()
 })
 
 var fullSize = document.getElementById('fullsize')
-//fullSize.addEventListener('mouseenter', function () {
-  //fullSize.style.opacity = '1';
-//})
-//fullSize.addEventListener('mouseleave', function () {
-  //fullSize.style.opacity = '.6';
-//})
 fullSize.addEventListener('click', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
   iframe.style.transform = 'scale(1)'
@@ -197,9 +194,35 @@ fullSize.addEventListener('click', function () {
   dims[HEIGHT].value = iframe.offsetHeight
 })
 
-var fullScreen = document.getElementById('fullscreen')
-//fullScreen.addEventListener('mouseenter', function () {
-  //fullSc
+var fullScreen = document.getElementById('fullsizerly')
+var isFullScreen = false
+function fullScreenToggle () {
+  isFullScreen = !isFullScreen
+  if (isFullScreen) {
+    fullScreen.src = 'images/downsize.png'
+    result.style.left = '0'
+    var iframe = document.getElementsByTagName('iframe')[0]
+    iframe.style.transform = 'scale(1)'
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+    dims[WIDTH].value = iframe.offsetWidth
+    dims[HEIGHT].value = iframe.offsetHeight
+  } else {
+    fullScreen.src = 'images/fullsize.png'
+    result.style.left = '50%'
+    var iframe = document.getElementsByTagName('iframe')[0]
+    iframe.style.transform = 'scale(1)'
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+    dims[WIDTH].value = iframe.offsetWidth
+    dims[HEIGHT].value = iframe.offsetHeight
+  }
+}
+fullScreen.addEventListener('click', fullScreenToggle)
+
+Mousetrap.bind(['command+i', 'ctrl+i'], function(e) {
+  fullScreenToggle()
+});
 
 //// Presets
 var presets = document.getElementsByClassName('preset')
@@ -566,7 +589,6 @@ includeJsCheck.addEventListener('click', function () {
   fillInFields()
 })
 downloadButton.addEventListener('click', function () {
-  console.log('asdf')
   var zip = new JSZip();
   zip.file("index.html", exportTemplate.replace('%SCRIPT%', '').replace('%STYLE%', '').replace('%HTML%', model.html));
   zip.file("index.js", model.js);
@@ -700,7 +722,6 @@ highlightSelection = model.highlightElement;
 cssLang.selectedIndex = model.cssLang
 conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
 var numEditors = contentBody.children.length-1
-console.log(numEditors)
 if (!model.htmlShow) {
   hideHtmlEditor(numEditors)
 }
