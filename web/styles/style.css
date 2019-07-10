@@ -337,8 +337,12 @@ select {
   color: #9e769e;
 }
 
-#resultpop:hover {
+#resultpop:hover * {
   opacity: .6;
+}
+
+.popchild:hover {
+  opacity: 1.0 !important;
   cursor: pointer;
 }
 
@@ -352,6 +356,10 @@ select {
   color: #9e769e;
 
   cursor: pointer;
+}
+
+.dropbtn:hover {
+  opacity: 1;
 }
 
 .dropdown {

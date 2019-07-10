@@ -171,23 +171,23 @@ result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
 var refresh = document.getElementById('refresh')
-refresh.addEventListener('mouseenter', function () {
-  refresh.style.opacity = '1';
-})
-refresh.addEventListener('mouseleave', function () {
-  refresh.style.opacity = '.6';
-})
+//refresh.addEventListener('mouseenter', function () {
+  //refresh.style.opacity = '1';
+//})
+//refresh.addEventListener('mouseleave', function () {
+  //refresh.style.opacity = '.6';
+//})
 refresh.addEventListener('click', function () {
   resetIframe()
 })
 
 var fullSize = document.getElementById('fullsize')
-fullSize.addEventListener('mouseenter', function () {
-  fullSize.style.opacity = '1';
-})
-fullSize.addEventListener('mouseleave', function () {
-  fullSize.style.opacity = '.6';
-})
+//fullSize.addEventListener('mouseenter', function () {
+  //fullSize.style.opacity = '1';
+//})
+//fullSize.addEventListener('mouseleave', function () {
+  //fullSize.style.opacity = '.6';
+//})
 fullSize.addEventListener('click', function () {
   var iframe = document.getElementsByTagName('iframe')[0]
   iframe.style.transform = 'scale(1)'
@@ -196,6 +196,10 @@ fullSize.addEventListener('click', function () {
   dims[WIDTH].value = iframe.offsetWidth
   dims[HEIGHT].value = iframe.offsetHeight
 })
+
+var fullScreen = document.getElementById('fullscreen')
+//fullScreen.addEventListener('mouseenter', function () {
+  //fullSc
 
 //// Presets
 var presets = document.getElementsByClassName('preset')

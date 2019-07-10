@@ -118,58 +118,146 @@
          id="rect4764"
          style="fill:#9e769e;fill-opacity:1;stroke-width:0.01183676" />
     </g>
-    <rect
-       transform="rotate(90)"
-       style="fill:#9e769e;fill-opacity:1;stroke-width:0.011754"
-       id="rect40528"
-       width="1.0581968"
-       height="0.5872466"
-       x="105.35035"
-       y="169.29266" />
-    <rect
-       transform="rotate(-90)"
-       style="fill:#9e769e;fill-opacity:1;stroke-width:0.01673722"
-       id="rect40534"
-       width="2.145664"
-       height="0.5872466"
-       x="-106.40855"
-       y="-171.43837" />
-    <rect
-       y="105.8213"
-       x="-171.43837"
-       height="0.5872466"
-       width="1.7688867"
-       id="rect40536"
-       style="fill:#9e769e;fill-opacity:1;stroke-width:0.01519682" />
-    <rect
-       style="fill:#9e769e;fill-opacity:1;stroke-width:0.00744406"
-       id="rect40546"
-       width="0.9179318"
-       height="0.27153447"
-       x="-170.2106"
-       y="104.26289" />
-    <rect
-       y="169.29266"
-       x="104.26289"
-       height="0.27153447"
-       width="0.9179318"
-       id="rect40550"
-       style="fill:#9e769e;fill-opacity:1;stroke-width:0.00744406"
-       transform="rotate(90)" />
-    <rect
-       y="104.26289"
-       x="-171.43837"
-       height="0.5872466"
-       width="1.0581968"
-       id="rect40552"
-       style="fill:#9e769e;fill-opacity:1;stroke-width:0.011754" />
-    <rect
-       style="fill:#9e769e;fill-opacity:1;stroke:none;stroke-width:0.42317486;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect40554"
-       width="1.4908627"
-       height="0.35315824"
-       x="-195.27892"
-       y="-46.17197"
-       transform="rotate(-45)" />
+    <g
+       id="g927">
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         y="169.29266"
+         x="105.35035"
+         height="0.5872466"
+         width="1.0581968"
+         id="rect40528"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.011754"
+         transform="rotate(90)" />
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         y="-171.43837"
+         x="-106.40855"
+         height="0.5872466"
+         width="2.145664"
+         id="rect40534"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.01673722"
+         transform="rotate(-90)" />
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.01519682"
+         id="rect40536"
+         width="1.7688867"
+         height="0.5872466"
+         x="-171.43837"
+         y="105.8213" />
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         y="104.26289"
+         x="-170.2106"
+         height="0.27153447"
+         width="0.9179318"
+         id="rect40546"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.00744406" />
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         transform="rotate(90)"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.00744406"
+         id="rect40550"
+         width="0.9179318"
+         height="0.27153447"
+         x="104.26289"
+         y="169.29266" />
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.011754"
+         id="rect40552"
+         width="1.0581968"
+         height="0.5872466"
+         x="-171.43837"
+         y="104.26289" />
+      <rect
+         inkscape:export-ydpi="96"
+         inkscape:export-xdpi="96"
+         transform="rotate(-45)"
+         y="-46.17197"
+         x="-195.27892"
+         height="0.35315824"
+         width="1.4908627"
+         id="rect40554"
+         style="fill:#9e769e;fill-opacity:1;stroke:none;stroke-width:0.42317486;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g943"
+       transform="rotate(90,-169.15236,106.53133)">
+      <rect
+         transform="rotate(90)"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.011754"
+         id="rect929"
+         width="1.0581968"
+         height="0.5872466"
+         x="105.35035"
+         y="169.29266"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         transform="rotate(-90)"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.01673722"
+         id="rect931"
+         width="2.145664"
+         height="0.5872466"
+         x="-106.40855"
+         y="-171.43837"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         y="105.8213"
+         x="-171.43837"
+         height="0.5872466"
+         width="1.7688867"
+         id="rect933"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.01519682"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.00744406"
+         id="rect935"
+         width="0.9179318"
+         height="0.27153447"
+         x="-170.2106"
+         y="104.26289"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         y="169.29266"
+         x="104.26289"
+         height="0.27153447"
+         width="0.9179318"
+         id="rect937"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.00744406"
+         transform="rotate(90)"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         y="104.26289"
+         x="-171.43837"
+         height="0.5872466"
+         width="1.0581968"
+         id="rect939"
+         style="fill:#9e769e;fill-opacity:1;stroke-width:0.011754"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         style="fill:#9e769e;fill-opacity:1;stroke:none;stroke-width:0.42317486;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect941"
+         width="1.4908627"
+         height="0.35315824"
+         x="-195.27892"
+         y="-46.17197"
+         transform="rotate(-45)"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+    </g>
   </g>
 </svg>
