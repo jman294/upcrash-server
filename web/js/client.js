@@ -95,9 +95,7 @@ for (var e in es) {
     name: "showKeyboardShortcuts",
     bindKey: {win: "Ctrl-i", mac: "Command-i"},
     exec: function(editor) {
-      //ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-        fullScreenToggle()
-      //})
+      fullScreenToggle()
     }
   })
 }
@@ -222,7 +220,10 @@ fullScreen.addEventListener('click', fullScreenToggle)
 
 Mousetrap.bind(['command+i', 'ctrl+i'], function(e) {
   fullScreenToggle()
-});
+})
+Mousetrap.bind(['command+1', 'ctrl+1'], function(e) {
+  console.log('preset 1')
+})
 
 //// Presets
 var presets = document.getElementsByClassName('preset')
