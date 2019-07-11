@@ -102,7 +102,7 @@ for (var e in es) {
 
 function resetIframe () {
   var iframe = document.getElementsByTagName('iframe')[0]
-  iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
+  iframe.src = 'https://upcrash-serve.herokuapp.com/' + id
   resizeIframe(dims[0].value, dims[1].value)
 }
 
@@ -520,19 +520,7 @@ window.onload = function () {
 }
 
 // HEADER BUTTONS
-var exportTemplate = `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="stylesheet.css" type="text/css">
-    %STYLE%
-  </head>
-  <body>
-    %HTML%
-    %SCRIPT%
-  </body>
-</html>`
+var exportTemplate = '<!DOCTYPE html>\r\n<html>\r\n\t<head>\r\n\t\t<meta charset=\"UTF-8\">\r\n\t\t<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\r\n\t\t<link rel=\"stylesheet\" href=\"stylesheet.css\" type=\"text/css\">\r\n\t\t%STYLE%\r\n\t</head>\r\n\t<body>\r\n\t\t%HTML%\r\n\t\t%SCRIPT%\r\n\t</body>\r\n</html>'
 var styleTemplate = '<style>%CSS%</style>'
 var scriptTemplate = '<script>%JS%</script>'
 var aboutButton = document.getElementById('aboutbutton')

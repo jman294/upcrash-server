@@ -13,3 +13,5 @@ doc/api/
 
 *.swp
 *.swo
+
+node_modules/

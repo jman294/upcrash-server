@@ -19,7 +19,7 @@ html, body {
 
   background-color: #272822;
 
-  z-index: 100;
+  z-index: 250;
 }
 
 #header a {
@@ -40,8 +40,8 @@ html, body {
   bottom: 0;
   left: 0;
 
-  height: 75%;
-  width: 50%;
+  height: 45%;
+  width: 35%;
 
   display: none;
 
@@ -56,8 +56,8 @@ html, body {
 }
 
 #modal textarea {
-  width: 95%;
-  height: 25%;
+  width: 99%;
+  height: 100px;
 
   display: block;
 
@@ -65,6 +65,10 @@ html, body {
 
   margin: auto;
   margin-top: 6px;
+}
+
+#exporttextareas {
+  width: 100%;
 }
 
 #modal button {
@@ -142,7 +146,7 @@ html, body {
   background-color: black;
   opacity: 0.5;
 
-  z-index: 100;
+  z-index: 100000;
 }
 
 #body {
@@ -244,7 +248,7 @@ html, body {
 
   background-color: #282828;
 
-  z-index: 100;
+  z-index: 50;
 }
 
 label {
@@ -435,7 +439,7 @@ select {
   overflow-y: auto;
   overflow-x: auto;
 
-  z-index: 5000;
+  z-index: 200;
 }
 
 iframe {
@@ -471,6 +475,10 @@ iframe {
 
   .con, .edit, .checkc, #new, #clone, #aboutbutton {
     display: none;
+  }
+
+  .mcheck {
+    display: inline;
   }
 }
 
