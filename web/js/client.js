@@ -104,6 +104,9 @@ function resetIframe () {
   var iframe = document.getElementsByTagName('iframe')[0]
   iframe.src = 'https://upcrash-serve.herokuapp.com/' + id
   resizeIframe(dims[0].value, dims[1].value)
+  if (model.clearConsole) {
+    console.clear()
+  }
 }
 
 // RESIZE IFRAME
@@ -464,29 +467,28 @@ function save (cb) {
     NProgress.start()
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
-
       if (oReq.status === 403) {
         setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
         //TODO alert that it cannot be saved
-        console.log('%ccannot save!', 'color: red')
         saveNotifier.style.display = 'inline-block'
         saveNotifier.innerHTML = 'Cannot Save!'
-        saveNotifier.classList.remove('good')
+        saveNotifier.classList.remove('good', 'ok')
         saveNotifier.classList.add('bad')
+        //TODO this is where an online/offline editor could go
       } else {
         saveNotifier.style.display = 'inline-block'
         saveNotifier.innerHTML = 'Saved!'
         console.log('%csaved!', 'color: red')
         saveNotifier.classList.add('good')
-        saveNotifier.classList.remove('bad')
+        saveNotifier.classList.remove('bad', 'ok')
       }
     })
     oReq.addEventListener('error', function () {
       saveNotifier.style.display = 'inline-block'
       saveNotifier.innerHTML = 'Cannot Save!'
-      saveNotifier.classList.remove('good')
+      saveNotifier.classList.remove('good', 'ok')
       saveNotifier.classList.add('bad')
     })
     oReq.addEventListener('loadend', function () {
@@ -497,7 +499,12 @@ function save (cb) {
     oReq.send(JSON.stringify(model))
   }
 
-  if (id === '%ID%') {
+  if (!navigator.onLine) {
+    saveNotifier.style.display = 'inline-block'
+    saveNotifier.innerHTML = 'Offline!'
+    saveNotifier.classList.add('ok')
+    saveNotifier.classList.remove('good', 'bad')
+  } else if (id === '%ID%') {
     setNewId(sendRequest)
   } else {
     sendRequest()
@@ -668,13 +675,18 @@ cssLang.addEventListener('change', function (e) {
   conheads[CSS].innerHTML = e.target.value
 })
 
-//// Editor settings
+//// Other Settings
 var lintCheck = document.getElementById('lintcheck')
 lintCheck.addEventListener('change', function (e) {
   model.setProp('lintCheck', e.target.checked)
   for (var ed in es) {
     es[ed].ace.getSession().setUseWorker(e.target.checked)
   }
+})
+
+var consoleClearCheck = document.getElementById('consolecheck')
+consoleClearCheck.addEventListener('change', function (e) {
+  model.setProp('clearConsole', e.target.checked)
 })
 
 // COMPILERS

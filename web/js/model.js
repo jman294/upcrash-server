@@ -18,6 +18,8 @@ function Model (obj, onChange) {
 
   this.lintCheck = true
 
+  this.clearConsole = true
+
   this.changed = onChange
 
   this.setProp = function (prop, newValue) {

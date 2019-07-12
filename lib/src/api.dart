@@ -87,6 +87,7 @@ class ServerApi {
         res.write(results.toString());
         return res;
       } else {
+        print(payload);
         return new Response.error(HttpStatus.BAD_REQUEST,
             new ServerException(ServerErrors.invalidCrashDoesNotConform));
       }

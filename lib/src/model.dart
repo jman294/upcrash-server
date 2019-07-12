@@ -19,6 +19,8 @@ class Model {
   int cssLang;
 
   bool lintCheck;
+  
+  bool clearConsole;
 
   Model(
       this.js,
@@ -35,10 +37,11 @@ class Model {
       this.jsLang,
       this.htmlLang,
       this.cssLang,
-      this.lintCheck);
+      this.lintCheck,
+      this.clearConsole);
 
   factory Model.default_() {
-    return new Model("", "", "", "", "", "", true, true, true, false, 3, 0, 0, 0, true);
+    return new Model("", "", "", "", "", "", true, true, true, false, 3, 0, 0, 0, true, true);
   }
 
   static conformsToModel(Map json) {
@@ -58,7 +61,8 @@ class Model {
       json['jsLang'] != null &&
       json['htmlLang'] != null &&
       json['cssLang'] != null &&
-      json['lintCheck'] != null;
+      json['lintCheck'] != null &&
+      json['clearConsole'] != null;
     if (!hasFields) return false;
     bool fieldTypesCorrect =
       json['js'] is String &&
@@ -75,7 +79,8 @@ class Model {
       json['jsLang'] is int &&
       json['htmlLang'] is int &&
       json['cssLang'] is int &&
-      json['lintCheck'] is bool;
+      json['lintCheck'] is bool &&
+      json['clearConsole'] is bool;
     if (!fieldTypesCorrect) return false;
     bool fieldValuesCorrect =
       json['loadType'] >= 0 &&
