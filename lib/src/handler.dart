@@ -51,7 +51,7 @@ class UpcrashServer {
       webHost = address + port;
     }
     _serApi = new ServerApi(
-        _fbClient, envVars['FB_HOST'], webHost);
+        _fbClient, envVars['FB_HOST'], webHost, _log);
     try {
       await _serApi.init();
     } on FileSystemException {

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:firebase/firebase_io.dart';
 import 'package:mailer/mailer.dart';
+import 'package:logging/logging.dart';
 import 'package:server/src/id.dart';
 import 'package:server/src/server_error.dart';
 import 'package:server/src/server_errors.dart';
@@ -14,13 +15,14 @@ class ServerApi {
   FirebaseClient _db;
   String _fbHost;
   String _webHost;
+  Logger _log;
   String _homePage;
   String _homePageRaw;
   final String _toReplace = '%FILLIN%';
   final String _toReplaceId = '%ID%';
   String _modelJson;
 
-  ServerApi(this._db, this._fbHost, this._webHost);
+  ServerApi(this._db, this._fbHost, this._webHost, this._log);
 
   Future init() async {
     _modelJson = json.encode(new Model.default_());
@@ -111,6 +113,7 @@ class ServerApi {
               new ServerException(
                   'old crash was reworked and not able to be saved'));
         }
+        _log.info('The crash ' + id.toString() + ' with an old version model was reversioned');
       }
       Response res = new Response();
       res.headers['content-type'] = 'text/html';
