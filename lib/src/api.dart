@@ -1,11 +1,10 @@
-library server.api;
-
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase/firebase_io.dart';
 import 'package:mailer/mailer.dart';
+import 'package:logging/logging.dart';
 import 'package:server/src/id.dart';
 import 'package:server/src/server_error.dart';
 import 'package:server/src/server_errors.dart';
@@ -14,17 +13,19 @@ import 'package:server/src/model.dart';
 
 class ServerApi {
   FirebaseClient _db;
-  String _host;
+  String _fbHost;
+  String _webHost;
+  Logger _log;
   String _homePage;
   String _homePageRaw;
   final String _toReplace = '%FILLIN%';
   final String _toReplaceId = '%ID%';
   String _modelJson;
 
-  ServerApi(this._db, this._host);
+  ServerApi(this._db, this._fbHost, this._webHost, this._log);
 
   Future init() async {
-    _modelJson = JSON.encode(new Model.default_());
+    _modelJson = json.encode(new Model.default_());
 
     final String homePagePath = 'web/index.html';
     try {
@@ -34,7 +35,7 @@ class ServerApi {
     }
     _homePage = _homePageRaw
         .replaceAll(_toReplace, _modelJson)
-        .replaceAll('src="https://upcrash-serve.herokuapp.com/%ID%"', '');
+        .replaceAll('src="${_webHost}"', '');
   }
 
   Future<Response> home() async {
@@ -45,11 +46,12 @@ class ServerApi {
   }
 
   Future<Response> save(HttpRequest req, Id id) async {
-    var exists = true;
+    bool exists = true;
+    var results;
     try {
-      var results = await _db.get('$_host/$id.json');
+      results = await _db.get('$_fbHost/$id.json');
       exists = results != null && results['js'] != null;
-    } on Exception {
+    } on Exception catch (e) {
       return new Response.error(HttpStatus.BAD_REQUEST,
           new ServerException(ServerErrors.crashNotFound));
     }
@@ -70,79 +72,63 @@ class ServerApi {
     if (canEdit) {
       Map<dynamic, dynamic> payload;
       try {
-        payload = JSON.decode(await UTF8.decodeStream(req));
-
-        if (Model.conformsToModel(payload)) {
-          try {
-            var results = await _db.put('$_host/$id.json', payload);
-
-            Response res = new Response();
-            res.write(results.toString());
-            return res;
-          } on Exception {
-            return new Response.error(HttpStatus.BAD_REQUEST,
-                new ServerException(ServerErrors.invalidCrash));
-          }
-        } else {
-          return new Response.error(HttpStatus.BAD_REQUEST,
-              new ServerException(ServerErrors.invalidCrashDoesNotConform));
-        }
+        payload = json.decode(await utf8.decodeStream(req));
       } on FormatException {
         return new Response.error(HttpStatus.BAD_REQUEST,
             new ServerException(ServerErrors.invalidCrash));
+      }
+      if (Model.conformsToModel(payload)) {
+        try {
+          var _ = await _db.put('$_fbHost/$id.json', payload);
+        } on Exception {
+          return new Response.error(HttpStatus.BAD_REQUEST,
+              new ServerException(ServerErrors.invalidCrash));
+        }
+        Response res = new Response();
+        res.write(results.toString());
+        return res;
+      } else {
+        return new Response.error(HttpStatus.BAD_REQUEST,
+            new ServerException(ServerErrors.invalidCrashDoesNotConform));
       }
     }
   }
 
   Future<Response> load(Id id) async {
-    final dynamic results = await _db.get('$_host/$id.json');
+    final dynamic results = await _db.get('$_fbHost/$id.json');
     if (results == null) {
       //TODO add dedicated 404 error page that says sorry
       return new Response.error(HttpStatus.NOT_FOUND,
           new ServerException(ServerErrors.crashNotFound));
     } else {
-      if (Model.conformsToModel(results)) {
-        Response res = new Response();
-        res.headers['content-type'] = 'text/html';
-        res.write(_homePageRaw
-            .replaceAll(_toReplace, JSON.encode(results))
-            .replaceAll(_toReplaceId, id.toString()));
-        return res;
-      } else {
-        //TODO add dedicated error page that says sorry
-        return new Response.error(HttpStatus.INTERNAL_SERVER_ERROR,
-            new ServerException('it seems a crash was corrupted'));
+      if (!Model.conformsToModel(results)) {
+        // Rework payload to conform
+        Model rebuiltPayload = Model.transferValidFields(results);
+        Map<String, dynamic> payload = rebuiltPayload.toJson();
+        try {
+          var _ = await _db.put('$_fbHost/$id.json', payload);
+        } on Exception {
+          return new Response.error(
+              HttpStatus.BAD_REQUEST,
+              new ServerException(
+                  'old crash was reworked and not able to be saved'));
+        }
+        _log.info('The crash ' + id.toString() + ' with an old version model was reversioned');
       }
+      Response res = new Response();
+      res.headers['content-type'] = 'text/html';
+      res.write(_homePageRaw
+          .replaceAll(_toReplace, json.encode(results))
+          .replaceAll(_toReplaceId, id.toString()));
+      return res;
     }
   }
 
   Future<Response> new_() async {
     Response res = new Response();
-    res.headers['Content-Type'] = 'text/json';
+    res.headers['content-type'] = 'text/json';
     Id id = new Id.pronounceable();
-    res.write(new JsonEncoder().convert({'newId': id.toString()}));
-    return res;
-  }
-
-  Future<Response> feedback(String payload, String passw) async {
-    Response res = new Response();
-
-    GmailSmtpOptions opts = new GmailSmtpOptions()
-      ..username = 'upcrashfeedback@gmail.com'
-      ..password = passw;
-
-    SmtpTransport trans = new SmtpTransport(opts);
-    Envelope envelope = new Envelope()
-      ..from = 'jduplessis294@gmail.com'
-      ..recipients.add('jduplessis294@gmail.com')
-      ..subject = 'Upcrash Feedback'
-      ..text = payload;
-
-    await trans
-        .send(envelope)
-        .then((envelope) => print('Email sent!'))
-        .catchError((e) => print('Error occurred: $e'));
-
+    res.write(json.encode({'newId': id.toString()}));
     return res;
   }
 }

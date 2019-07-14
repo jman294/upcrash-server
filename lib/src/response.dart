@@ -1,4 +1,4 @@
-library ads.response;
+library server.response;
 
 import 'dart:io';
 import 'dart:convert';
@@ -34,6 +34,17 @@ class Response {
   }
   void write(String str) {
     _data.insertAll(_data.length, encoder.convert(str));
+  }
+  HttpResponse toHttpResponse(HttpResponse response) {
+    // `this` keyword added for clarity
+    response.statusCode = this.statusCode;
+    response.reasonPhrase = this.reasonPhrase;
+    this.headers
+        .forEach((name, value) => response.headers.add(name, value));
+    if (this._data != null) {
+      response.add(this._data);
+    }
+    return response;
   }
 
   Response();

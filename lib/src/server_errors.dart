@@ -7,4 +7,5 @@ class ServerErrors {
       'invalid crash does not fit model';
   static final String invalidUri = 'invalid uri';
   static final String couldNotAuthenticate = 'could not authenticate';
+  static final String couldNotInitialize = 'could not initialize due to bad configuration';
 }

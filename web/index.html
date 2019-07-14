@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
     <title>Upcrash</title>
 
     <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
@@ -12,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#9e769e">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
@@ -22,23 +21,25 @@
   <body>
     <div id="header">
       <img src="images/logo.png" alt="upcrash logo" title="Upcrash"></img>
-      <a id="aboutbutton">ABOUT</a>
+      <a id="aboutbutton">EXPORT</a>
       <!--<a class="popup">EMBED</a>-->
       <a id="clone" class="popup">CLONE</a>
       <a id="new">NEW</a>
       <div id="modalover" class="modali"></div>
       <div id="modal" class="modali">
-        <b>Hey there!</b> Thanks for checking out Upcrash. Prototype, create, and share web snippets! <a href="https://github.com/jman294/upcrash-server" target="_blank">Visit the Github here</a>
-        <br>
-        <br>
-        We welcome your feedback:
-        <textarea id="feedarea"></textarea>
-        <button id="feedbutton">SEND</button>
-        <div id="noti">Sent!</div>
+        <span class="checkc mcheck"><input id="includejs" class="check" type="checkbox" checked>Include JS in html</span>
+        <span class="checkc mcheck"><input id="includecss" class="check" type="checkbox">Include CSS in html</span>
+        <div id="exporttextareas">
+          <textarea id="exporthtmltextarea"></textarea>
+          <textarea id="exportcsstextarea"></textarea>
+          <textarea id="exportjstextarea"></textarea>
+        </div>
+        <button id="download">DOWNLOAD AS ZIP</button>
       </div>
       <span class="checkc"><input id="jscheck" class="check" type="checkbox" checked>JS</span>
       <span class="checkc"><input id="csscheck" class="check" type="checkbox" checked>CSS</span>
       <span class="checkc"><input id="htmlcheck" class="check" type="checkbox" checked>HTML</span>
+      <span class="checkc"><input id="consolecheck" class="check" type="checkbox" checked>Clear Console?</span>
       <span class="checkc"><input id="lintcheck" class="check" type="checkbox" checked>Lint?</span>
       <div id="noticontainer">
         <span id="savenoti">Saved!</span>
@@ -106,7 +107,7 @@
         <div id="cssedit" class="edit"></div>
       </div>
       <div id="result">
-        <iframe src="https://upcrash-serve.herokuapp.com/%ID%">
+        <iframe src="https://upcrash-serve.herokuapp.com/%25ID%25">
           #document
           <html>
             <body>
@@ -114,22 +115,24 @@
           </html>
         </iframe>
         <div id="resultpop" class="pop">
-          <img src="images/fullscreen.png" id="fullsize" title="Fullsize the result"></img>
+          RESULT|
+          <img src="images/fullsize.png" id="fullsizerly" title="Fullscreen the result" class="popchild"></img>
+          <img src="images/fullscreen.png" id="fullsize" title="Fullsize the result" class="popchild"></img>
           <input type="text" class="iframedim" tabindex="1"></input>
           x
           <input type="text" class="iframedim" tabindex="2"></input>
           <div class="dropdown">
-            <span class="dropbtn">PRESETS</span>
+            <span class="dropbtn popchild">PRESETS</span>
             <div class="dropdown-content">
               <span class="preset" data-pwidth="375" data-pheight="667">iPHONE 6/7/8</span>
               <span class="preset" data-pwidth="414" data-pheight="736">iPHONE 6/7/8 Plus</span>
               <span class="preset" data-pwidth="320" data-pheight="568">iPHONE 5/SE</span>
               <span class="preset" data-pwidth="360" data-pheight="640">GALAXY S5</span>
               <span class="preset" data-pwidth="375" data-pheight="812">iPHONE X</span>
+              <span class="preset" data-pwidth="1080" data-pheight="720">DESKTOP</span>
             </div>
           </div>
-          RESULT
-          <img src="images/refresh.png" id="refresh" title="Refresh the result"></img>
+          <img src="images/refresh.png" id="refresh" title="Refresh the result" class="popchild"></img>
         </div>
       </div>
     </div>
@@ -144,6 +147,8 @@ var template = %FILLIN%
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./jszip.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://craig.global.ssl.fastly.net/js/mousetrap/mousetrap.min.js?a4098" type="text/javascript" charset="utf-8"></script>
     <script src="built.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>

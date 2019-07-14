@@ -91,12 +91,22 @@ for (var e in es) {
       updateModel()
     }, 1000)
   })
+  es[e].ace.commands.addCommand({
+    name: "showKeyboardShortcuts",
+    bindKey: {win: "Ctrl-i", mac: "Command-i"},
+    exec: function(editor) {
+      fullScreenToggle()
+    }
+  })
 }
 
 function resetIframe () {
   var iframe = document.getElementsByTagName('iframe')[0]
-  iframe.src = `https://upcrash-serve.herokuapp.com/${id}`
+  iframe.src = 'https://upcrash-serve.herokuapp.com/' + id
   resizeIframe(dims[0].value, dims[1].value)
+  if (model.clearConsole) {
+    console.clear()
+  }
 }
 
 // RESIZE IFRAME
@@ -183,6 +193,39 @@ fullSize.addEventListener('click', function () {
   iframe.style.height = '100%'
   dims[WIDTH].value = iframe.offsetWidth
   dims[HEIGHT].value = iframe.offsetHeight
+})
+
+var fullScreen = document.getElementById('fullsizerly')
+var isFullScreen = false
+function fullScreenToggle () {
+  isFullScreen = !isFullScreen
+  if (isFullScreen) {
+    fullScreen.src = 'images/downsize.png'
+    result.style.left = '0'
+    var iframe = document.getElementsByTagName('iframe')[0]
+    iframe.style.transform = 'scale(1)'
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+    dims[WIDTH].value = iframe.offsetWidth
+    dims[HEIGHT].value = iframe.offsetHeight
+  } else {
+    fullScreen.src = 'images/fullsize.png'
+    result.style.left = '50%'
+    var iframe = document.getElementsByTagName('iframe')[0]
+    iframe.style.transform = 'scale(1)'
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+    dims[WIDTH].value = iframe.offsetWidth
+    dims[HEIGHT].value = iframe.offsetHeight
+  }
+}
+fullScreen.addEventListener('click', fullScreenToggle)
+
+Mousetrap.bind(['command+i', 'ctrl+i'], function(e) {
+  fullScreenToggle()
+})
+Mousetrap.bind(['command+1', 'ctrl+1'], function(e) {
+  console.log('preset 1')
 })
 
 //// Presets
@@ -372,12 +415,42 @@ function updateModel () {
         model.setProp('uncompiledJS', inputJS)
       }
     } else {
-      model.setProp('js', es.js.ace.session.getValue())
+      model.setProp('js', inputJS)
       model.setProp('uncompiledJS', '')
     }
   }
-  model.setProp('html', es.html.ace.session.getValue())
-  model.setProp('css', es.css.ace.session.getValue())
+  var inputHtml = es.html.ace.session.getValue()
+  if (model.willChange('html', inputHtml)) {
+    if (usingHtmlTranspiler) {
+      var compiledHtml = compileHtml(inputHtml, htmlLang.selectedIndex)
+      if (compiledHtml === false) {
+        model.setProp('uncompiledHTML', inputHtml)
+      } else {
+        model.setProp('html', compiledHtml)
+        model.setProp('uncompiledHTML', inputHtml)
+      }
+    } else {
+      model.setProp('html', inputHtml)
+      model.setProp('uncompiledHTML', '')
+    }
+  }
+  var inputCss = es.css.ace.session.getValue()
+  if (model.willChange('css', inputCss)) {
+    if (usingCssTranspiler) {
+      var compiledCss = compileCss(inputCss, cssLang.selectedIndex)
+      if (compiledCss === false) {
+        model.setProp('uncompiledCSS', inputCss)
+      } else {
+        model.setProp('css', compiledCss)
+        model.setProp('uncompiledCSS', inputCss)
+      }
+    } else {
+      model.setProp('css', inputCss)
+      model.setProp('uncompiledCSS', '')
+    }
+  }
+  //model.setProp('html', es.html.ace.session.getValue())
+  //model.setProp('css', es.css.ace.session.getValue())
 }
 
 function onModelChange (what) {
@@ -394,29 +467,26 @@ function save (cb) {
     NProgress.start()
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', function () {
-
       if (oReq.status === 403) {
         setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
-        //TODO alert that it cannot be saved
-        console.log('%ccannot save!', 'color: red')
         saveNotifier.style.display = 'inline-block'
         saveNotifier.innerHTML = 'Cannot Save!'
-        saveNotifier.classList.remove('good')
+        saveNotifier.classList.remove('good', 'ok')
         saveNotifier.classList.add('bad')
       } else {
         saveNotifier.style.display = 'inline-block'
         saveNotifier.innerHTML = 'Saved!'
         console.log('%csaved!', 'color: red')
         saveNotifier.classList.add('good')
-        saveNotifier.classList.remove('bad')
+        saveNotifier.classList.remove('bad', 'ok')
       }
     })
     oReq.addEventListener('error', function () {
       saveNotifier.style.display = 'inline-block'
       saveNotifier.innerHTML = 'Cannot Save!'
-      saveNotifier.classList.remove('good')
+      saveNotifier.classList.remove('good', 'ok')
       saveNotifier.classList.add('bad')
     })
     oReq.addEventListener('loadend', function () {
@@ -427,7 +497,12 @@ function save (cb) {
     oReq.send(JSON.stringify(model))
   }
 
-  if (id === '%ID%') {
+  if (!navigator.onLine) {
+    saveNotifier.style.display = 'inline-block'
+    saveNotifier.innerHTML = 'Offline!'
+    saveNotifier.classList.add('ok')
+    saveNotifier.classList.remove('good', 'bad')
+  } else if (id === '%ID%') {
     setNewId(sendRequest)
   } else {
     sendRequest()
@@ -450,39 +525,81 @@ window.onload = function () {
 }
 
 // HEADER BUTTONS
+var exportTemplate = '<!DOCTYPE html>\r\n<html>\r\n\t<head>\r\n\t\t<meta charset=\"UTF-8\">\r\n\t\t<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\r\n\t\t<link rel=\"stylesheet\" href=\"stylesheet.css\" type=\"text/css\">\r\n\t\t%STYLE%\r\n\t</head>\r\n\t<body>\r\n\t\t%HTML%\r\n\t\t%SCRIPT%\r\n\t</body>\r\n</html>'
+var styleTemplate = '<style>%CSS%</style>'
+var scriptTemplate = '<script>%JS%</script>'
 var aboutButton = document.getElementById('aboutbutton')
 var modalItems = document.getElementsByClassName('modali')
 var modalOver = modalItems[0]
-var sendFeedback = document.getElementById('feedbutton')
-var feedbackArea = document.getElementById('feedarea')
-var notification = document.getElementById('noti')
+var htmlOutputArea = document.getElementById('exporthtmltextarea')
+var cssOutputArea = document.getElementById('exportcsstextarea')
+var jsOutputArea = document.getElementById('exportjstextarea')
+var includeCssCheck = document.getElementById('includecss')
+var includeJsCheck = document.getElementById('includejs')
+var downloadButton = document.getElementById('download')
 var aboutModalState = false
+function fillInFields () {
+  var filledInTemplate = exportTemplate.replace('%HTML%', model.html)
+  if (includeJsCheck.checked) {
+    filledInTemplate = filledInTemplate.replace('%SCRIPT%', scriptTemplate.replace('%JS%', model.js))
+  } else {
+    filledInTemplate = filledInTemplate.replace('%SCRIPT%', '')
+  }
+  if (includeCssCheck.checked) {
+    filledInTemplate = filledInTemplate.replace('%STYLE%', styleTemplate.replace('%CSS%', model.css))
+  } else {
+    filledInTemplate = filledInTemplate.replace('%STYLE%', '')
+  }
+  htmlOutputArea.value = filledInTemplate
+  cssOutputArea.value = model.css
+  cssOutputArea.value = model.js
+}
 aboutButton.addEventListener('click', function () {
   aboutModalState = !aboutModalState;
   if (aboutModalState) {
-    for (var i=0; i<modalItems.length; i++) {
+    fillInFields()
+    for (var i = 0; i < modalItems.length; i++) {
       modalItems[i].style.display = 'block'
+    }
+    if (modal.lastElementChild.nodeName == 'A') {
+      modal.removeChild(modal.lastElementChild)
     }
   } else {
     for (var i=0; i<modalItems.length; i++) {
       modalItems[i].style.display = 'none'
     }
-    noti.style.display = 'none'
   }
 })
 modalOver.addEventListener('click', function () {
   aboutModalState = false;
-  for (var i=0; i<modalItems.length; i++) {
+  for (var i = 0; i < modalItems.length; i++) {
     modalItems[i].style.display = 'none'
   }
-  noti.style.display = 'none'
 })
-sendFeedback.addEventListener('click', function () {
-  noti.style.display = 'block'
-  var fReq = new XMLHttpRequest()
-  fReq.open('POST', '/feedback')
-  fReq.send(feedbackArea.value)
-  feedbackArea.value = ''
+includeCssCheck.addEventListener('click', function () {
+  fillInFields()
+})
+includeJsCheck.addEventListener('click', function () {
+  fillInFields()
+})
+downloadButton.addEventListener('click', function () {
+  var zip = new JSZip();
+  zip.file("index.html", exportTemplate.replace('%SCRIPT%', '').replace('%STYLE%', '').replace('%HTML%', model.html));
+  zip.file("index.js", model.js);
+  zip.file("style.css", model.css);
+  zip.generateAsync({type:"blob"})
+  .then(function(content) {
+    var blobUrl = URL.createObjectURL(content);
+    var link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = "website.zip";
+    link.innerHTML = "Click here to download the file";
+    if (modal.lastElementChild.nodeName == 'A') {
+      modal.lastElementChild.href = blobUrl
+    } else {
+      modal.appendChild(link);
+    }
+  });
 })
 
 var newLink = document.getElementById('new')
@@ -534,8 +651,10 @@ jsLang.addEventListener('change', function (e) {
 
 //// HTML Settings
 var htmlLang = document.getElementById('htmllang')
+var usingHtmlTranspiler = false
 htmlLang.addEventListener('change', function (e) {
   model.setProp('htmlLang', e.target.selectedIndex)
+  usingHtmlTranspiler = e.target.selectedIndex !== 0
   conheads[HTML].innerHTML = e.target.value
 })
 
@@ -547,18 +666,25 @@ highlightCheck.addEventListener('change', function (e) {
 
 //// CSS Settings
 var cssLang = document.getElementById('csslang')
+var usingCssTranspiler
 cssLang.addEventListener('change', function (e) {
   model.setProp('cssLang', e.target.selectedIndex)
+  usingCssTranspiler = e.target.selectedIndex !== 0
   conheads[CSS].innerHTML = e.target.value
 })
 
-//// Editor settings
+//// Other Settings
 var lintCheck = document.getElementById('lintcheck')
 lintCheck.addEventListener('change', function (e) {
   model.setProp('lintCheck', e.target.checked)
   for (var ed in es) {
     es[ed].ace.getSession().setUseWorker(e.target.checked)
   }
+})
+
+var consoleClearCheck = document.getElementById('consolecheck')
+consoleClearCheck.addEventListener('change', function (e) {
+  model.setProp('clearConsole', e.target.checked)
 })
 
 // COMPILERS
@@ -573,7 +699,27 @@ function compileJS (rawJS, mode) {
   }
 }
 
+//function compileHtml (rawHtml, mode) {
+  //return rawHtml
+//}
+
+//function compileCss (rawCss, mode) {
+  //return rawCss
+//}
+
 // INITIALIZATION
+loadType.selectedIndex = model.loadType
+jsLang.selectedIndex = model.jsLang
+usingJSTranspiler = jsLang.selectedIndex !== 0
+conheads[JS].innerHTML = jsLang.options[model.jsLang].value
+
+htmlLang.selectedIndex = model.htmlLang
+conheads[HTML].innerHTML = htmlLang.options[model.htmlLang].value
+highlightCheck.checked = model.highlightElement
+highlightSelection = model.highlightElement;
+
+cssLang.selectedIndex = model.cssLang
+conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
 var numEditors = contentBody.children.length-1
 if (!model.htmlShow) {
   hideHtmlEditor(numEditors)
@@ -587,18 +733,6 @@ if (!model.cssShow) {
   hideCssEditor(numEditors)
 }
 
-loadType.selectedIndex = model.loadType
-jsLang.selectedIndex = model.jsLang
-usingJSTranspiler = jsLang.selectedIndex !== 0
-conheads[JS].innerHTML = jsLang.options[model.jsLang].value
-
-htmlLang.selectedIndex = model.htmlLang
-conheads[HTML].innerHTML = htmlLang.options[model.htmlLang].value
-highlightCheck.checked = model.highlightElement
-highlightSelection = model.highlightElement;
-
-cssLang.selectedIndex = model.cssLang
-conheads[CSS].innerHTML = cssLang.options[model.cssLang].value
 
 lintCheck.checked = model.lintCheck
 

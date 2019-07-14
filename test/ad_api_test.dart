@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:firebase/firebase_io.dart';
 import 'package:sqljocky/sqljocky.dart';
 import 'package:test/test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:ads/src/ad_api.dart';
 import 'package:ads/src/id.dart';
 
