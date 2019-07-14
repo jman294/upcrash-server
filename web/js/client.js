@@ -471,12 +471,10 @@ function save (cb) {
         setNewId(sendRequest)
         return
       } else if (oReq.status >= 400) {
-        //TODO alert that it cannot be saved
         saveNotifier.style.display = 'inline-block'
         saveNotifier.innerHTML = 'Cannot Save!'
         saveNotifier.classList.remove('good', 'ok')
         saveNotifier.classList.add('bad')
-        //TODO this is where an online/offline editor could go
       } else {
         saveNotifier.style.display = 'inline-block'
         saveNotifier.innerHTML = 'Saved!'

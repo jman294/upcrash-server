@@ -36,8 +36,8 @@ class UpcrashServer {
     final ServiceAccountCredentials accountCredentials =
         new ServiceAccountCredentials.fromJson(privateKey);
     final List<String> scopes = [
-      'https://www.googleapis.com/auth/firebase.database',
-      'https://www.googleapis.com/auth/userinfo.email'
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/firebase.database'
     ];
     final http.Client client = new http.Client();
     final AccessCredentials credentials =

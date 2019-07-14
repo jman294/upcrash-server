@@ -44,13 +44,12 @@ class ServerApi {
   }
 
   Future<Response> save(HttpRequest req, Id id) async {
-    var exists = true;
-
+    bool exists = true;
     var results;
     try {
       results = await _db.get('$_fbHost/$id.json');
       exists = results != null && results['js'] != null;
-    } on Exception {
+    } on Exception catch (e) {
       return new Response.error(HttpStatus.BAD_REQUEST,
           new ServerException(ServerErrors.crashNotFound));
     }
@@ -78,7 +77,7 @@ class ServerApi {
       }
       if (Model.conformsToModel(payload)) {
         try {
-          var results = await _db.put('$_fbHost/$id.json', payload);
+          var _ = await _db.put('$_fbHost/$id.json', payload);
         } on Exception {
           return new Response.error(HttpStatus.BAD_REQUEST,
               new ServerException(ServerErrors.invalidCrash));
@@ -87,7 +86,6 @@ class ServerApi {
         res.write(results.toString());
         return res;
       } else {
-        print(payload);
         return new Response.error(HttpStatus.BAD_REQUEST,
             new ServerException(ServerErrors.invalidCrashDoesNotConform));
       }
@@ -101,18 +99,25 @@ class ServerApi {
       return new Response.error(HttpStatus.NOT_FOUND,
           new ServerException(ServerErrors.crashNotFound));
     } else {
-      if (Model.conformsToModel(results)) {
-        Response res = new Response();
-        res.headers['content-type'] = 'text/html';
-        res.write(_homePageRaw
-            .replaceAll(_toReplace, json.encode(results))
-            .replaceAll(_toReplaceId, id.toString()));
-        return res;
-      } else {
-        //TODO add dedicated error page that says sorry
-        return new Response.error(HttpStatus.INTERNAL_SERVER_ERROR,
-            new ServerException('it seems a crash was corrupted'));
+      if (!Model.conformsToModel(results)) {
+        // Rework payload to conform
+        Model rebuiltPayload = Model.transferValidFields(results);
+        Map<String, dynamic> payload = rebuiltPayload.toJson();
+        try {
+          var _ = await _db.put('$_fbHost/$id.json', payload);
+        } on Exception {
+          return new Response.error(
+              HttpStatus.BAD_REQUEST,
+              new ServerException(
+                  'old crash was reworked and not able to be saved'));
+        }
       }
+      Response res = new Response();
+      res.headers['content-type'] = 'text/html';
+      res.write(_homePageRaw
+          .replaceAll(_toReplace, json.encode(results))
+          .replaceAll(_toReplaceId, id.toString()));
+      return res;
     }
   }
 
