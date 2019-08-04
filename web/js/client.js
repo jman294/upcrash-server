@@ -552,7 +552,7 @@ function fillInFields () {
   }
   htmlOutputArea.value = filledInTemplate
   cssOutputArea.value = model.css
-  cssOutputArea.value = model.js
+  jsOutputArea.value = model.js
 }
 aboutButton.addEventListener('click', function () {
   aboutModalState = !aboutModalState;
