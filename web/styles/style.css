@@ -40,7 +40,7 @@ html, body {
   bottom: 0;
   left: 0;
 
-  height: 45%;
+  height: 55%;
   width: 35%;
 
   display: none;
@@ -53,6 +53,17 @@ html, body {
   background-color: #282828;
 
   z-index: 500000;
+}
+
+#modal-ad {
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+  text-align: center;
+}
+
+#modal-ad-subtitle {
+  display: inline;
 }
 
 #modal textarea {
