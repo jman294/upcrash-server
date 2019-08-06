@@ -93,9 +93,16 @@ for (var e in es) {
   })
   es[e].ace.commands.addCommand({
     name: "showKeyboardShortcuts",
-    bindKey: {win: "Ctrl-i", mac: "Command-i"},
+    bindKey: {win: "Ctrl-m", mac: "Command-m"},
     exec: function(editor) {
       fullScreenToggle()
+    }
+  })
+  es[e].ace.commands.addCommand({
+    name: "mobileScreen",
+    bindKey: {win: "Ctrl-shift-l", mac: "Command-shift-l"},
+    exec: function(editor) {
+      toggleSmallScreen()
     }
   })
 }
@@ -221,11 +228,24 @@ function fullScreenToggle () {
 }
 fullScreen.addEventListener('click', fullScreenToggle)
 
-Mousetrap.bind(['command+i', 'ctrl+i'], function(e) {
+function toggleSmallScreen () {
+  var iframe = document.getElementsByTagName('iframe')[0]
+  if (iframe.style.width == '100%' &&
+      iframe.style.height == '100%') {
+    iframe.style.width = '50%'
+    iframe.style.height = '50%'
+  } else {
+    iframe.style.width = '100%'
+    iframe.style.height = '100%'
+  }
+}
+
+
+Mousetrap.bind(['command+m', 'ctrl+m'], function(e) {
   fullScreenToggle()
 })
-Mousetrap.bind(['command+1', 'ctrl+1'], function(e) {
-  console.log('preset 1')
+Mousetrap.bind(['command+shift+l', 'ctrl+shift+l'], function(e) {
+  toggleSmallScreen()
 })
 
 //// Presets
