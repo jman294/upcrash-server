@@ -34,18 +34,17 @@ html, body {
 }
 
 #modal {
-  position: absolute;
-  top: 0;
-  right: 0;
+  position: fixed;
+  top: 32px;
+  /*right: 0;*/
   bottom: 0;
-  left: 0;
+  left: 30%;
 
-  height: 55%;
   width: 35%;
 
   display: none;
 
-  margin: auto;
+  /*margin: auto;*/
   padding: 8px;
 
   border: solid 3px #9d769e;
