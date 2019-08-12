@@ -3,6 +3,7 @@
     <title>Upcrash</title>
 
     <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
+    <meta charset="utf-8">
 
     <link href="styles/style.css" rel="stylesheet">
     <link href="styles/nprogress.css" rel="stylesheet">
@@ -27,8 +28,11 @@
       <a id="new">NEW</a>
       <div id="modalover" class="modali"></div>
       <div id="modal" class="modali">
-        <span class="checkc mcheck"><input id="includejs" class="check" type="checkbox" checked>Include JS in html</span>
-        <span class="checkc mcheck"><input id="includecss" class="check" type="checkbox">Include CSS in html</span>
+        <div id="checkcontainter">
+          <span class="checkc mcheck"><input id="includejs" class="check" type="checkbox" checked>Include JS in html</span>
+          <span class="checkc mcheck"><input id="includecss" class="check" type="checkbox">Include CSS in html</span>
+        </div>
+        <span id="modalexit">×</span>
         <div id="exporttextareas">
           <textarea id="exporthtmltextarea"></textarea>
           <textarea id="exportcsstextarea"></textarea>

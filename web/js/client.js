@@ -557,6 +557,7 @@ var jsOutputArea = document.getElementById('exportjstextarea')
 var includeCssCheck = document.getElementById('includecss')
 var includeJsCheck = document.getElementById('includejs')
 var downloadButton = document.getElementById('download')
+var exitModalButton = document.getElementById('modalexit')
 var aboutModalState = false
 function fillInFields () {
   var filledInTemplate = exportTemplate.replace('%HTML%', model.html)
@@ -588,6 +589,11 @@ aboutButton.addEventListener('click', function () {
     for (var i=0; i<modalItems.length; i++) {
       modalItems[i].style.display = 'none'
     }
+  }
+})
+exitModalButton.addEventListener('click', function () {
+  for (var i=0; i<modalItems.length; i++) {
+    modalItems[i].style.display = 'none'
   }
 })
 modalOver.addEventListener('click', function () {
