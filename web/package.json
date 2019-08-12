@@ -1,0 +1,15 @@
+{
+  "name": "none",
+  "version": "1.0.0",
+  "description": "none",
+  "main": "build.js",
+  "dependencies": {
+    "uglify-js": "^3.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
