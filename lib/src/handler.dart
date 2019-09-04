@@ -74,7 +74,7 @@ class UpcrashServer {
 
     Response resp = new Response();
     if (req.requestedUri.toString().substring(0, 5) == 'http:' && _redirectHttps) {
-      Uri redirect = req.uri.replace(scheme: 'https', host: req.headers.host, port: req.headers.port, path: req.uri.path);
+      Uri redirect = req.uri.replace(scheme: 'https', host: req.headers.host, path: req.uri.path);
       await req.response.redirect(redirect);
       return;
     }
