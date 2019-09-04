@@ -16,6 +16,7 @@ Future main(List<String> args) async {
     print(e);
     throw e;
   }
+  upServer.redirectHttps = !(Platform.environment['WEB_HOST'] != 'production');
   var server = await HttpServer.bind(address, int.parse(port));
   server.sessionTimeout = 36000;
   server.listen(await upServer.handle);

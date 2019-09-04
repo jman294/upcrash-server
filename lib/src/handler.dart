@@ -17,6 +17,15 @@ class UpcrashServer {
   final Logger _log = new Logger('UpcrashServer');
   ServerApi _serApi;
   FirebaseClient _fbClient;
+  bool _redirectHttps = true;
+
+  void set redirectHttps (bool redirectHttps) {
+    _redirectHttps = redirectHttps;
+  }
+
+  bool get redirectHttps {
+    return _redirectHttps;
+  }
 
   UpcrashServer() {
     Logger.root
@@ -64,6 +73,11 @@ class UpcrashServer {
     List<String> uriParts = req.uri.pathSegments;
 
     Response resp = new Response();
+    if (req.requestedUri.toString().substring(0, 5) == 'http:' && _redirectHttps) {
+      Uri redirect = req.uri.replace(scheme: 'https', host: req.headers.host, port: req.headers.port, path: req.uri.path);
+      await req.response.redirect(redirect);
+      return;
+    }
     if (uriParts.length == 0) {
       resp = await _serApi.home();
     } else {
